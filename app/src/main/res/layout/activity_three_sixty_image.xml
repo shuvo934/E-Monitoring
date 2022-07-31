@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".threesixtyimage.ThreeSixtyImage">
+
+
+
+    <com.google.vr.sdk.widgets.pano.VrPanoramaView
+        android:id="@+id/vr_panorama_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"/>
+
+<!--    <pl.rjuszczyk.panorama.viewer.PanoramaGLSurfaceView-->
+<!--        android:id="@+id/panorama"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        app:gyroscopeEnabled="true"-->
+<!--        app:initialRotationX="0"-->
+<!--        app:initialRotationY="180"-->
+<!--        app:initialRotationZ="0"-->
+<!--        android:layout_alignParentStart="true"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:layout_alignParentEnd="true"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        />-->
+
+    <ImageView
+        android:id="@+id/loading_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/three_sixty_loading"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:contentDescription="@string/content_desc_three_sixty" />
+
+
+
+</RelativeLayout>
