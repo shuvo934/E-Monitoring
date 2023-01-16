@@ -1,5 +1,6 @@
 package com.shuvo.ttit.bridgeculvert.projectDetails;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -44,7 +45,6 @@ import com.shuvo.ttit.bridgeculvert.R;
 import com.shuvo.ttit.bridgeculvert.arraylist.CommentList;
 import com.shuvo.ttit.bridgeculvert.arraylist.LocationLists;
 import com.shuvo.ttit.bridgeculvert.dialogue.CommentsDialogue;
-import com.shuvo.ttit.bridgeculvert.dialogue.PicDialogue;
 import com.shuvo.ttit.bridgeculvert.dialogue.ShowCommentsDialogue;
 import com.shuvo.ttit.bridgeculvert.progressbar.WaitProgress;
 import com.shuvo.ttit.bridgeculvert.projectPicture.ProjectPicture;
@@ -129,11 +129,11 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
     Boolean fullScreen = false;
 
     WaitProgress waitProgress = new WaitProgress();
-    private String message = null;
+    String message = null;
     private Boolean conn = false;
     private Boolean connected = false;
 
-    private Connection connection;
+    Connection connection;
 
     public static ArrayList<CommentList> commentLists;
 
@@ -151,6 +151,8 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
 
     public static String URL_360 = "";
 
+    LinearLayout noMap;
+
 //    boolean enable = false;
 
     @Override
@@ -160,7 +162,9 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.single_map);
-        mapFragment.getMapAsync(this);
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
+        }
 
         selection = findViewById(R.id.spinnnnn_multi2);
 
@@ -205,6 +209,9 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
         projectPic = findViewById(R.id.picture_show_button);
         pic360 = findViewById(R.id.three_sixty_image_show_button);
         pic360.setVisibility(View.GONE);
+
+        noMap = findViewById(R.id.no_map_layout);
+        noMap.setVisibility(View.GONE);
 
         commentLists = new ArrayList<>();
 
@@ -273,14 +280,14 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
 
 
 
-        List<String> categories = new ArrayList<String>();
+        List<String> categories = new ArrayList<>();
         categories.add("NORMAL");
         categories.add("SATELLITE");
         categories.add("TERRAIN");
         categories.add("HYBRID");
         categories.add("NO LANDMARK");
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item, categories);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.spinner_item, categories);
 
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
 
@@ -456,6 +463,7 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
         });
 
         if (locationListsDial.size() != 0) {
+            noMap.setVisibility(View.GONE);
             if (locationListsDial.size() == 1 ) {
                 LatLng latLng = new LatLng(Double.parseDouble(locationListsDial.get(0).getLatitude()),Double.parseDouble(locationListsDial.get(0).getLongitude()));
                 Marker marker = mMap.addMarker(new MarkerOptions().position(latLng).title(P_NAME)
@@ -525,7 +533,7 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_micro_36_2))
                                 .snippet("Project No (প্রকল্প নং): "+ P_NO+"\nProject Code (প্রকল্প কোড) [জিও]: "+P_CODE+"\nProject Date: "+P_DATE  + "\nLength: "+ LENGTH + "\nWidth: "+ WIDTH+
                                         "\nEstimated Value: " + ES_VAL + "\nFinancial Year: " + F_YEAR));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 15));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 17));
                     }
                     else if (pointNumber > 1) {
 
@@ -540,12 +548,15 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
                                 .anchor((float) 0.5,(float) 0.5)
                                 .snippet("Project No (প্রকল্প নং): "+ P_NO+"\nProject Code (প্রকল্প কোড) [জিও]: "+P_CODE+"\nProject Date: "+P_DATE + "\nLength: "+ LENGTH + "\nWidth: "+ WIDTH+
                                         "\nEstimated Value: " + ES_VAL + "\nFinancial Year: " + F_YEAR));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
                     }
 
                 }
 
             }
+        }
+        else {
+            noMap.setVisibility(View.VISIBLE);
         }
     }
 
@@ -577,6 +588,7 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
         return false;
     }
 
+    @SuppressLint("StaticFieldLeak")
     public class CommentCheck extends AsyncTask<Void, Void, Void> {
 
         @Override

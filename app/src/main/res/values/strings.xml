@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">E-MONITORING</string>
     <string name="headline">E-MONITORING</string>
+    <string name="version_control">Version 9.0</string>
     <string name="searc_project_headline"><u>Search Project List &amp; Details</u></string>
     <string name="comments_name">Name<font color='red'>*</font></string>
     <string name="comments_email">Email<font color='red'>*</font></string>

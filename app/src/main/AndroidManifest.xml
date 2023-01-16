@@ -9,6 +9,7 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -22,7 +23,7 @@
         android:theme="@style/Theme.BridgeCulvert"
         android:usesCleartextTraffic="true"
         tools:targetApi="n">
-        <activity android:name=".projectPicture.ProjectPicture"></activity>
+        <activity android:name=".projectPicture.ProjectPicture"/>
         <activity android:name=".threesixtyimage.ThreeSixtyImage" />
         <activity android:name=".userChoice.ChooseUser" />
         <activity android:name=".login.Login" />
@@ -50,7 +51,8 @@
         <activity
             android:name=".mainmenu.HomePage"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -209,6 +209,13 @@ public class HomePage extends AppCompatActivity {
                 System.out.println(fys_id);
                 if (!fye_id.isEmpty()) {
                     afterYearSelection.setVisibility(View.VISIBLE);
+                    if (!div_id.isEmpty() && !fys_id.isEmpty() && !fye_id.isEmpty() && !dist_id.isEmpty()) {
+                        search.setEnabled(true);
+                        searchMap.setEnabled(true);
+                    } else {
+                        searchMap.setEnabled(false);
+                        search.setEnabled(false);
+                    }
 //                    search.setEnabled(true);
 //                    searchMap.setEnabled(true);
                 }
@@ -227,6 +234,13 @@ public class HomePage extends AppCompatActivity {
                 System.out.println(fye_id);
                 if (!fys_id.isEmpty()) {
                     afterYearSelection.setVisibility(View.VISIBLE);
+                    if (!div_id.isEmpty() && !fys_id.isEmpty() && !fye_id.isEmpty() && !dist_id.isEmpty()) {
+                        search.setEnabled(true);
+                        searchMap.setEnabled(true);
+                    } else {
+                        searchMap.setEnabled(false);
+                        search.setEnabled(false);
+                    }
 //                    search.setEnabled(true);
 //                    searchMap.setEnabled(true);
                 }
@@ -1058,6 +1072,9 @@ public class HomePage extends AppCompatActivity {
                 if (projectMapsLists.size() != 0) {
                     System.out.println(projectMapsLists.size());
                     Intent intent = new Intent(HomePage.this, ProjectsMaps.class);
+                    intent.putExtra("DIST_ID",dist_id);
+                    intent.putExtra("DD_ID",dd_id);
+                    intent.putExtra("DDU_ID",ddu_id);
                     startActivity(intent);
                 }
                 else {
