@@ -6,7 +6,7 @@ import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
+//import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,7 +40,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import static com.shuvo.ttit.bridgeculvert.adapter.PhotoAdapter.urlFromPhotoAdapter;
-import static com.shuvo.ttit.bridgeculvert.connection.OracleConnection.createConnection;
+//import static com.shuvo.ttit.bridgeculvert.connection.OracleConnection.createConnection;
 import static com.shuvo.ttit.bridgeculvert.projectDetails.ProjectDetails.PCM_ID_PD;
 
 

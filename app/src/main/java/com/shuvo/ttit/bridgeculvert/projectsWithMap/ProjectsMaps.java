@@ -318,23 +318,23 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
             }
 
             String finYear = projectMapsLists.get(i).getFyFinancialYearName();
-            String dateC = projectMapsLists.get(i).getPcmProjectDate().substring(0, 10);
+//            String dateC = projectMapsLists.get(i).getPcmProjectDate().substring(0, 10);
             //System.out.println(dateC);
 
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
+//            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+//            SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.getDefault());
 
-            String proDate = "";
-            Date date = null;
-
-            try {
-                date = df.parse(dateC);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            if (date != null) {
-                proDate = sdf.format(date);
-            }
+            String proDate = projectMapsLists.get(i).getPcmProjectDate();
+//            Date date = null;
+//
+//            try {
+//                date = df.parse(dateC);
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//            if (date != null) {
+//                proDate = sdf.format(date);
+//            }
             if (locationLists.size() != 0) {
                 String snippet = "Project No (প্রকল্প নং): " + proNo + "\nProject Code (প্রকল্প কোড) [জিও]: " + projectCode + "\nProject Date: " + proDate + "\nLength: " + length + "\nWidth: " + width +
                         "\nEstimated Value: " + totalVal + "\nFinancial Year: " + finYear;

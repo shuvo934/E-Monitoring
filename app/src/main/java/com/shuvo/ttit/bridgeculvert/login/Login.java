@@ -25,6 +25,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
 import com.shuvo.ttit.bridgeculvert.R;
 import com.shuvo.ttit.bridgeculvert.arraylist.UserDetails;
@@ -32,20 +39,27 @@ import com.shuvo.ttit.bridgeculvert.mainmenu.HomePage;
 import com.shuvo.ttit.bridgeculvert.progressbar.WaitProgress;
 
 
-import java.io.IOException;
+//import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+//import java.sql.CallableStatement;
+//import java.sql.Connection;
+//import java.sql.ResultSet;
+//import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-import static com.shuvo.ttit.bridgeculvert.connection.OracleConnection.createConnection;
+//import static com.shuvo.ttit.bridgeculvert.connection.OracleConnection.createConnection;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class Login extends AppCompatActivity {
@@ -67,19 +81,19 @@ public class Login extends AppCompatActivity {
     String brand = "";
     String ipAddress = "";
     String hostUserName = "";
-    String sessionId = "";
+//    String sessionId = "";
     String osName = "";
 
     WaitProgress waitProgress = new WaitProgress();
-    private String message = null;
+//    private String message = null;
     private Boolean conn = false;
     private Boolean infoConnected = false;
     private Boolean connected = false;
 
-    private Boolean getConn = false;
-    private Boolean getConnected = false;
+//    private Boolean getConn = false;
+//    private Boolean getConnected = false;
 
-    private Connection connection;
+//    private Connection connection;
 
     SharedPreferences sharedpreferences;
 
@@ -87,8 +101,8 @@ public class Login extends AppCompatActivity {
     String getPassword = "";
     boolean getChecked = false;
 
-    String userId = "";
-    String emp_id = "";
+//    String userId = "";
+//    String emp_id = "";
 
     public static final String MyPREFERENCES = "UserPassBRIDGECULVERT" ;
     public static final String user_emp_code = "nameKey";
@@ -239,13 +253,14 @@ public class Login extends AppCompatActivity {
                 closeKeyBoard();
 
                 login_failed.setVisibility(View.GONE);
-                userName = user.getText().toString();
-                password = pass.getText().toString();
+                userName = Objects.requireNonNull(user.getText()).toString();
+                password = Objects.requireNonNull(pass.getText()).toString();
 
                 if (!userName.isEmpty() && !password.isEmpty()) {
 
 
-                    new CheckLogin().execute();
+//                    new CheckLogin().execute();
+                    getUser();
 
                 } else {
                     Toast.makeText(getApplicationContext(), "Please Give User Name and Password", Toast.LENGTH_SHORT).show();
@@ -322,199 +337,379 @@ public class Login extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
 
-    public boolean isConnected () {
-        boolean connected = false;
-        boolean isMobile = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
+//    public boolean isConnected () {
+//        boolean connected = false;
+//        boolean isMobile = false;
+//        try {
+//            ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+//            return connected;
+//        } catch (Exception e) {
+//            Log.e("Connectivity Exception", e.getMessage());
+//        }
+//        return connected;
+//    }
+//
+//    public boolean isOnline () {
+//
+//        Runtime runtime = Runtime.getRuntime();
+//        try {
+//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+//            int exitValue = ipProcess.waitFor();
+//            return (exitValue == 0);
+//        } catch (IOException | InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return false;
+//    }
+//
+//    public class CheckLogin extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//
+//            waitProgress.show(getSupportFragmentManager(), "WaitBar");
+//            waitProgress.setCancelable(false);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            if (isConnected() && isOnline()) {
+//
+//                LoginQuery();
+//                if (connected) {
+//                    conn = true;
+//                    message = "Internet Connected";
+//                }
+//
+//            } else {
+//                conn = false;
+//                message = "Not Connected";
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            waitProgress.dismiss();
+//            if (conn) {
+//
+//                if (!userId.equals("-1")) {
+//                    if (infoConnected) {
+//
+//                        if (checkBox.isChecked()) {
+//                            System.out.println("Remembered");
+//                            SharedPreferences.Editor editor = sharedpreferences.edit();
+//                            editor.remove(user_emp_code);
+//                            editor.remove(user_password);
+//                            editor.remove(checked);
+//                            editor.putString(user_emp_code,userName);
+//                            editor.putString(user_password,password);
+//                            editor.putBoolean(checked,true);
+//                            editor.apply();
+//                            editor.commit();
+//                        } else {
+//                            System.out.println("Not Remembered");
+//                            SharedPreferences.Editor editor = sharedpreferences.edit();
+//                            editor.remove(user_emp_code);
+//                            editor.remove(user_password);
+//                            editor.remove(checked);
+//
+//                            editor.apply();
+//                            editor.commit();
+//                        }
+//
+//
+//                        Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+//                        Intent intent = new Intent(Login.this, HomePage.class);
+//                        intent.putExtra("USER","ADMIN");
+//                        startActivity(intent);
+//                        finish();
+//
+//                    } else {
+//                        new CheckLogin().execute();
+//                    }
+//
+//                } else {
+//
+//                    login_failed.setVisibility(View.VISIBLE);
+//                }
+//                conn = false;
+//                connected = false;
+//                infoConnected = false;
+//
+//
+//            } else {
+//                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+//                AlertDialog dialog = new AlertDialog.Builder(Login.this)
+//                        .setMessage("Please Check Your Internet Connection")
+//                        .setPositiveButton("Retry", null)
+//                        .show();
+//
+////                dialog.setCancelable(false);
+////                dialog.setCanceledOnTouchOutside(false);
+//                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+//                positive.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//
+//                        new CheckLogin().execute();
+//                        dialog.dismiss();
+//                    }
+//                });
+//            }
+//        }
+//    }
+//
+//    public void LoginQuery () {
+//
+//        try {
+//            this.connection = createConnection();
+//
+//            userInfoLists = new ArrayList<>();
+//
+//            Statement stmt = connection.createStatement();
+//
+//            ResultSet rs = stmt.executeQuery("select VALIDATE_USER_DB('" + userName + "',HAMID_ENCRYPT_DESCRIPTION_PACK.HEDP_ENCRYPT('" + password + "')) val from dual\n");
+//
+//            while (rs.next()) {
+//                userId = rs.getString(1);
+//            }
+//
+//            if (!userId.equals("-1")) {
+//
+//                ResultSet resultSet = stmt.executeQuery("select id, name, email from users where id = "+userId+"");
+//
+//                while (resultSet.next()) {
+//                    userInfoLists.add(new UserDetails(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3)));
+//                }
+//
+//                ResultSet resultSet2 = stmt.executeQuery("SELECT SYS_CONTEXT ('USERENV', 'SESSIONID') --INTO P_IULL_SESSION_ID\n" +
+//                        "   FROM DUAL\n");
+//
+//                while (resultSet2.next()) {
+//                    System.out.println("SESSION ID: "+ resultSet2.getString(1));
+//                    sessionId = resultSet2.getString(1);
+//                }
+//
+//                resultSet2.close();
+//
+//                String userName = userInfoLists.get(0).getUserName();
+//
+//                CallableStatement callableStatement1 = connection.prepareCall("{call USERLOGINDTL(?,?,?,?,?,?,?,?,?)}");
+//                callableStatement1.setString(1,userName);
+//                callableStatement1.setString(2, brand+" "+model);
+//                callableStatement1.setString(3,ipAddress);
+//                callableStatement1.setString(4,hostUserName);
+//                callableStatement1.setInt(5,Integer.parseInt(userId));
+//                callableStatement1.setInt(6,Integer.parseInt(sessionId));
+//                callableStatement1.setString(7,"1");
+//                callableStatement1.setString(8,osName);
+//                callableStatement1.setInt(9,3);
+//                callableStatement1.execute();
+//
+//                callableStatement1.close();
+//
+//                infoConnected = true;
+//
+//            }
+//
+//            connected = true;
+//
+//            connection.close();
+//
+//        } catch (Exception e) {
+//
+//            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
+//            Log.i("ERRRRR", e.getLocalizedMessage());
+//            e.printStackTrace();
+//        }
+//
+//    }
 
-    public boolean isOnline () {
+    public void getUser() {
+        waitProgress.show(getSupportFragmentManager(), "WaitBar");
+        waitProgress.setCancelable(false);
+        conn = false;
+        connected = false;
+        infoConnected = false;
 
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        String get_url = "http://103.56.208.123:8086/terrain/bridge_culvert/admin_users/admin_login/"+userName+"/"+password;
+        String login_log_url = "http://103.56.208.123:8086/terrain/bridge_culvert/admin_users/login_details";
+        userInfoLists = new ArrayList<>();
 
-        return false;
-    }
+        RequestQueue requestQueue = Volley.newRequestQueue(Login.this);
 
-    public class CheckLogin extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            waitProgress.show(getSupportFragmentManager(), "WaitBar");
-            waitProgress.setCancelable(false);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (isConnected() && isOnline()) {
-
-                LoginQuery();
-                if (connected) {
-                    conn = true;
-                    message = "Internet Connected";
+        StringRequest loginLogReq = new StringRequest(Request.Method.POST, login_log_url, response -> {
+            try {
+                conn = true;
+                JSONObject jsonObject = new JSONObject(response);
+                String string_out = jsonObject.getString("string_out");
+                if (string_out.equals("Successfully Created")) {
+                    infoConnected = true;
+                    updateInterface();
+                }
+                else {
+                    infoConnected = false;
+                    updateInterface();
                 }
 
-            } else {
+            } catch (JSONException e) {
+                e.printStackTrace();
                 conn = false;
-                message = "Not Connected";
+                updateInterface();
+            }
+        }, error -> {
+
+            conn = false;
+            updateInterface();
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String u_name = userInfoLists.get(0).getUserName();
+                String u_id = userInfoLists.get(0).getUserId();
+                headers.put("P_IULL_USER_ID",u_name);
+                headers.put("P_IULL_CLIENT_HOST_NAME",brand+" "+model);
+                headers.put("P_IULL_CLIENT_IP_ADDR",ipAddress);
+                headers.put("P_IULL_CLIENT_HOST_USER_NAME",hostUserName);
+                headers.put("P_IULL_SESSION_USER_ID",u_id);
+                headers.put("P_IULL_OS_NAME",osName);
+                return headers;
+            }
+        };
+
+        StringRequest getUserRequest = new StringRequest(Request.Method.GET, get_url, response -> {
+            try {
+                conn = true;
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    connected = true;
+                    JSONArray array = new JSONArray(items);
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject userInfo = array.getJSONObject(i);
+                        String id = userInfo.getString("id");
+                        String name = userInfo.getString("name");
+                        String email = userInfo.getString("email");
+
+                        userInfoLists.add(new UserDetails(id,name,email));
+                    }
+                    if (userInfoLists.size() != 0) {
+                        requestQueue.add(loginLogReq);
+                    }
+                }
+                else {
+                    connected = false;
+                    Toast.makeText(getApplicationContext(),"Invalid User",Toast.LENGTH_SHORT).show();
+                    updateInterface();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                conn = false;
+                updateInterface();
+
             }
 
-            return null;
-        }
+        }, error -> {
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+            conn = false;
+            updateInterface();
+        });
 
-            waitProgress.dismiss();
-            if (conn) {
-
-                if (!userId.equals("-1")) {
-                    if (infoConnected) {
-
-                        if (checkBox.isChecked()) {
-                            System.out.println("Remembered");
-                            SharedPreferences.Editor editor = sharedpreferences.edit();
-                            editor.remove(user_emp_code);
-                            editor.remove(user_password);
-                            editor.remove(checked);
-                            editor.putString(user_emp_code,userName);
-                            editor.putString(user_password,password);
-                            editor.putBoolean(checked,true);
-                            editor.apply();
-                            editor.commit();
-                        } else {
-                            System.out.println("Not Remembered");
-                            SharedPreferences.Editor editor = sharedpreferences.edit();
-                            editor.remove(user_emp_code);
-                            editor.remove(user_password);
-                            editor.remove(checked);
-
-                            editor.apply();
-                            editor.commit();
-                        }
+        requestQueue.add(getUserRequest);
 
 
-                        Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(Login.this, HomePage.class);
-                        intent.putExtra("USER","ADMIN");
-                        startActivity(intent);
-                        finish();
+    }
 
+    public void updateInterface() {
+        waitProgress.dismiss();
+        if (conn) {
+            if (connected) {
+                if (infoConnected) {
+
+                    if (checkBox.isChecked()) {
+                        System.out.println("Remembered");
+                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                        editor.remove(user_emp_code);
+                        editor.remove(user_password);
+                        editor.remove(checked);
+                        editor.putString(user_emp_code,userName);
+                        editor.putString(user_password,password);
+                        editor.putBoolean(checked,true);
+                        editor.apply();
+                        editor.commit();
                     } else {
-                        new CheckLogin().execute();
+                        System.out.println("Not Remembered");
+                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                        editor.remove(user_emp_code);
+                        editor.remove(user_password);
+                        editor.remove(checked);
+
+                        editor.apply();
+                        editor.commit();
                     }
 
-                } else {
 
-                    login_failed.setVisibility(View.VISIBLE);
+                    Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(Login.this, HomePage.class);
+                    intent.putExtra("USER","ADMIN");
+                    startActivity(intent);
+                    finish();
+
                 }
-                conn = false;
-                connected = false;
-                infoConnected = false;
-
-
-            } else {
-                Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
-                AlertDialog dialog = new AlertDialog.Builder(Login.this)
-                        .setMessage("Please Check Your Internet Connection")
-                        .setPositiveButton("Retry", null)
-                        .show();
+                else {
+                    Toast.makeText(getApplicationContext(), "Failed to Get User", Toast.LENGTH_SHORT).show();
+                    AlertDialog dialog = new AlertDialog.Builder(Login.this)
+                            .setMessage("System Failed to Get User, Please Try Again.")
+                            .setPositiveButton("Retry", null)
+                            .show();
 
 //                dialog.setCancelable(false);
 //                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        new CheckLogin().execute();
-                        dialog.dismiss();
-                    }
-                });
-            }
-        }
-    }
-
-    public void LoginQuery () {
-
-        try {
-            this.connection = createConnection();
-
-            userInfoLists = new ArrayList<>();
-
-            Statement stmt = connection.createStatement();
-
-            ResultSet rs = stmt.executeQuery("select VALIDATE_USER_DB('" + userName + "',HAMID_ENCRYPT_DESCRIPTION_PACK.HEDP_ENCRYPT('" + password + "')) val from dual\n");
-
-            while (rs.next()) {
-                userId = rs.getString(1);
-            }
-
-            if (!userId.equals("-1")) {
-
-                ResultSet resultSet = stmt.executeQuery("select id, name, email from users where id = "+userId+"");
-
-                while (resultSet.next()) {
-                    userInfoLists.add(new UserDetails(resultSet.getString(1), resultSet.getString(2), resultSet.getString(3)));
+                    Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                    positive.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            getUser();
+                            dialog.dismiss();
+                        }
+                    });
                 }
 
-                ResultSet resultSet2 = stmt.executeQuery("SELECT SYS_CONTEXT ('USERENV', 'SESSIONID') --INTO P_IULL_SESSION_ID\n" +
-                        "   FROM DUAL\n");
-
-                while (resultSet2.next()) {
-                    System.out.println("SESSION ID: "+ resultSet2.getString(1));
-                    sessionId = resultSet2.getString(1);
-                }
-
-                resultSet2.close();
-
-                String userName = userInfoLists.get(0).getUserName();
-
-                CallableStatement callableStatement1 = connection.prepareCall("{call USERLOGINDTL(?,?,?,?,?,?,?,?,?)}");
-                callableStatement1.setString(1,userName);
-                callableStatement1.setString(2, brand+" "+model);
-                callableStatement1.setString(3,ipAddress);
-                callableStatement1.setString(4,hostUserName);
-                callableStatement1.setInt(5,Integer.parseInt(userId));
-                callableStatement1.setInt(6,Integer.parseInt(sessionId));
-                callableStatement1.setString(7,"1");
-                callableStatement1.setString(8,osName);
-                callableStatement1.setInt(9,3);
-                callableStatement1.execute();
-
-                callableStatement1.close();
-
-                infoConnected = true;
-
+            } else {
+                login_failed.setVisibility(View.VISIBLE);
             }
+            conn = false;
+            connected = false;
+            infoConnected = false;
 
-            connected = true;
-
-            connection.close();
-
-        } catch (Exception e) {
-
-            //   Toast.makeText(MainActivity.this, ""+e,Toast.LENGTH_LONG).show();
-            Log.i("ERRRRR", e.getLocalizedMessage());
-            e.printStackTrace();
         }
+        else {
+            Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            AlertDialog dialog = new AlertDialog.Builder(Login.this)
+                    .setMessage("Please Check Your Internet Connection")
+                    .setPositiveButton("Retry", null)
+                    .show();
 
+//                dialog.setCancelable(false);
+//                dialog.setCanceledOnTouchOutside(false);
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    getUser();
+                    dialog.dismiss();
+                }
+            });
+        }
     }
 }
