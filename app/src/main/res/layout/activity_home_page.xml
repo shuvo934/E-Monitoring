@@ -55,9 +55,9 @@
                             android:layout_marginTop="5dp"
                             android:layout_marginBottom="5dp"
                             android:textStyle="bold"
-                            android:textSize="16sp"
-                            android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium" />
+                            android:textSize="18sp"
+                            android:textColor="@color/primary_dupain"
+                            android:fontFamily="@font/patua_one"/>
                         <TextView
                             android:id="@+id/user_full_name"
                             android:layout_width="match_parent"
@@ -68,8 +68,8 @@
                             android:layout_marginBottom="5dp"
                             android:textStyle="bold"
                             android:textSize="16sp"
-                            android:textColor="@color/primary_dupain"
-                            android:fontFamily="@font/russo_one" />
+                            android:textColor="@color/primaryVariant_spray"
+                            android:fontFamily="@font/poppins_bold" />
 
                     </LinearLayout>
 
@@ -81,7 +81,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="10dp"
-                    android:fontFamily="@font/cantora_one"
+                    android:fontFamily="@font/patua_one"
                     android:text="@string/searc_project_headline"
                     android:textColor="@color/black"
                     android:textSize="18sp"

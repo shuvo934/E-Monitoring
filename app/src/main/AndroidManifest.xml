@@ -22,11 +22,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BridgeCulvert"
         android:usesCleartextTraffic="true"
+        android:largeHeap="true"
         tools:targetApi="n">
-        <activity android:name=".projectPicture.ProjectPicture"/>
-        <activity android:name=".threesixtyimage.ThreeSixtyImage" />
-        <activity android:name=".userChoice.ChooseUser" />
-        <activity android:name=".login.Login" />
+        <activity android:name=".projectPicture.ProjectPicture"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".threesixtyimage.ThreeSixtyImage"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".userChoice.ChooseUser"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".login.Login"
+            android:screenOrientation="portrait"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -41,17 +46,22 @@
 
         <activity
             android:name=".projectDetails.ProjectDetails"
-            android:label="@string/title_activity_project_details" />
+            android:label="@string/title_activity_project_details"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".projectsWithMap.ProjectsMaps"
-            android:label="@string/title_activity_projects_maps" />
+            android:label="@string/title_activity_projects_maps"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".projects.Projects"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden" />
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".mainmenu.HomePage"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden" />
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:screenOrientation="portrait"/>
         <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

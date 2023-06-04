@@ -31,11 +31,13 @@ public class Projectlists {
     private String sanctionType;
     private String length;
     private String width;
+    private boolean mapData;
+    private boolean imageData;
     private String rowNumber;
     private String count;
     private ArrayList<LocationLists> locationLists;
 
-    public Projectlists(String pcmId, String pcmEntryDate, String pcmInternalNo, String pcmProjectCode, String pcmUser, String pcmProjectName, String pcmProjectNo, String pcmProjectDate, String pcmPicChairmanName, String pcmPicChairmanDetails, String pcmEstimateProjectValue, String fyFinancialYearName, String fsmFundName, String projectTypeName, String projectSubTypeName, String pscSanctionCatName, String pcmCategoryName, String dduId, String ddId, String projEvaluationRem, String pcmgdTypeFlag, String projectDetails, String projectStartDate, String projectEndDate,String sanctionType, String length, String width, String rowNumber, String count, ArrayList<LocationLists> locationLists) {
+    public Projectlists(String pcmId, String pcmEntryDate, String pcmInternalNo, String pcmProjectCode, String pcmUser, String pcmProjectName, String pcmProjectNo, String pcmProjectDate, String pcmPicChairmanName, String pcmPicChairmanDetails, String pcmEstimateProjectValue, String fyFinancialYearName, String fsmFundName, String projectTypeName, String projectSubTypeName, String pscSanctionCatName, String pcmCategoryName, String dduId, String ddId, String projEvaluationRem, String pcmgdTypeFlag, String projectDetails, String projectStartDate, String projectEndDate,String sanctionType, String length, String width, boolean mapData, boolean imageData, String rowNumber, String count, ArrayList<LocationLists> locationLists) {
         this.pcmId = pcmId;
         this.pcmEntryDate = pcmEntryDate;
         this.pcmInternalNo = pcmInternalNo;
@@ -63,6 +65,8 @@ public class Projectlists {
         this.sanctionType = sanctionType;
         this.length = length;
         this.width = width;
+        this.mapData = mapData;
+        this.imageData = imageData;
         this.rowNumber = rowNumber;
         this.count = count;
         this.locationLists = locationLists;
@@ -306,5 +310,21 @@ public class Projectlists {
 
     public void setLocationLists(ArrayList<LocationLists> locationLists) {
         this.locationLists = locationLists;
+    }
+
+    public boolean isMapData() {
+        return mapData;
+    }
+
+    public void setMapData(boolean mapData) {
+        this.mapData = mapData;
+    }
+
+    public boolean isImageData() {
+        return imageData;
+    }
+
+    public void setImageData(boolean imageData) {
+        this.imageData = imageData;
     }
 }

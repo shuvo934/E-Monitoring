@@ -140,8 +140,8 @@ public class HomePage extends AppCompatActivity {
 
     ImageView logOut;
 
-    private int numberOfRequestsToMake;
-    private boolean hasRequestFailed = false;
+//    private int numberOfRequestsToMake;
+//    private boolean hasRequestFailed = false;
 
 
     @Override
@@ -2220,8 +2220,8 @@ public class HomePage extends AppCompatActivity {
         waitProgress.show(getSupportFragmentManager(), "WaitBar");
         waitProgress.setCancelable(false);
         conn = false;
-        numberOfRequestsToMake = 0;
-        hasRequestFailed = false;
+//        numberOfRequestsToMake = 0;
+//        hasRequestFailed = false;
 
         projectlists = new ArrayList<>();
 
@@ -2273,7 +2273,10 @@ public class HomePage extends AppCompatActivity {
                         String pcm_id = projectDataObject.getString("pcm_id");
                         String entry_date = projectDataObject.getString("entry_date");
                         String pcm_internal_no = projectDataObject.getString("pcm_internal_no");
+
                         String pcm_project_code = projectDataObject.getString("pcm_project_code");
+                        pcm_project_code = transformText(pcm_project_code);
+
                         String pcm_user = projectDataObject.getString("pcm_user");
 
                         String pcm_project_name = projectDataObject.getString("pcm_project_name");
@@ -2326,6 +2329,16 @@ public class HomePage extends AppCompatActivity {
                         String pcfd_distance_measure_unit = projectDataObject.getString("pcfd_distance_measure_unit");
                         String rownumber_ = projectDataObject.getString("rownumber_");
 
+                        String map_data_available = projectDataObject.getString("map_data_available");
+
+                        boolean map_data = false;
+                        map_data = !map_data_available.equals("0");
+
+                        String image_data_available = projectDataObject.getString("image_data_available");
+
+                        boolean image_data = false;
+                        image_data = !image_data_available.equals("0");
+
                         countingNum[0]++;
                         String stype = "";
                         switch (pcm_project_sanction_type) {
@@ -2362,15 +2375,16 @@ public class HomePage extends AppCompatActivity {
                                 psc_sanction_cat_name,pcm_category_name,null,
                                 pcu_dd_id,pcm_proj_evaluation_remarks,pcmgd_type_flag,
                                 pcm_project_details,start_date,end_date,
-                                stype,length,width,rownumber_,pCount,new ArrayList<>()));
+                                stype,length,width,map_data,image_data,rownumber_,pCount,new ArrayList<>()));
 
 
-                        numberOfRequestsToMake++;
+//                        numberOfRequestsToMake++;
 //                        System.out.println(projectlists.size() +", index: "+ i + "number of requests: "+ numberOfRequestsToMake);
-                        getLocations(pcm_id,i,projectlists);
+//                        getLocations(pcm_id,i,projectlists);
 
 
                     }
+                    getLocations();
                 }
                 else {
                     conn = true;
@@ -2390,19 +2404,17 @@ public class HomePage extends AppCompatActivity {
         requestQueue.add(projectDataRequest);
     }
 
-    public void getLocations(String pcm_ID, int index, ArrayList<Projectlists> arrayList) {
-
-        String url = "http://103.56.208.123:8086/terrain/bridge_culvert/projects/projectLocation?pcm_id="+pcm_ID;
+    public void getLocations() {
+        String url = "http://103.56.208.123:8086/terrain/bridge_culvert/all_locations/project_locations";
 
         RequestQueue requestQueue = Volley.newRequestQueue(HomePage.this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
             try {
-                numberOfRequestsToMake--;
                 JSONObject jsonObject = new JSONObject(response);
                 String items = jsonObject.getString("items");
                 String count = jsonObject.getString("count");
-                ArrayList<LocationLists> locationLists = new ArrayList<>();
+
                 if (!count.equals("0")) {
                     JSONArray jsonArray = new JSONArray(items);
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -2410,45 +2422,91 @@ public class HomePage extends AppCompatActivity {
                         String pcmgd_latitude = locationObject.getString("pcmgd_latitude");
                         String pcmgd_longitude = locationObject.getString("pcmgd_longitude");
                         int segment = locationObject.getInt("segment");
-                        locationLists.add(new LocationLists(pcmgd_latitude,pcmgd_longitude,segment));
+                        String pcmgd_pcm_id = locationObject.getString("pcmgd_pcm_id");
 
+                        for (int j = 0; j < projectlists.size(); j++) {
+                            if (pcmgd_pcm_id.equals(projectlists.get(j).getPcmId())) {
+                                ArrayList<LocationLists> locationLists = projectlists.get(j).getLocationLists();
+                                locationLists.add(new LocationLists(pcmgd_latitude,pcmgd_longitude,segment));
+                                projectlists.get(j).setLocationLists(locationLists);
+                            }
+                        }
                     }
                 }
-                arrayList.get(index).setLocationLists(locationLists);
-//                System.out.println("number of requests remain: "+numberOfRequestsToMake);
-                if (numberOfRequestsToMake == 0) {
-                    if (!hasRequestFailed) {
-                        conn = true;
-                        goToProjectLists();
-                    }
-                    else {
-                        conn = false;
-                        goToProjectLists();
-                    }
-                }
+                conn = true;
+                goToProjectLists();
 
             } catch (JSONException e) {
-                numberOfRequestsToMake--;
                 e.printStackTrace();
-                hasRequestFailed = true;
-                if(numberOfRequestsToMake == 0) {
-                    //The last request failed
-                    conn = false;
-                    goToProjectLists();
-                }
-            }
-        }, error -> {
-            numberOfRequestsToMake--;
-            hasRequestFailed = true;
-            if(numberOfRequestsToMake == 0) {
-                //The last request failed
                 conn = false;
                 goToProjectLists();
             }
+        }, error -> {
+            conn = false;
+            goToProjectLists();
         });
 
         requestQueue.add(stringRequest);
     }
+//    public void getLocations(String pcm_ID, int index, ArrayList<Projectlists> arrayList) {
+//
+//        String url = "http://103.56.208.123:8086/terrain/bridge_culvert/projects/projectLocation?pcm_id="+pcm_ID;
+//
+//        RequestQueue requestQueue = Volley.newRequestQueue(HomePage.this);
+//
+//        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
+//            try {
+//                numberOfRequestsToMake--;
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                ArrayList<LocationLists> locationLists = new ArrayList<>();
+//                if (!count.equals("0")) {
+//                    JSONArray jsonArray = new JSONArray(items);
+//                    for (int i = 0; i < jsonArray.length(); i++) {
+//                        JSONObject locationObject = jsonArray.getJSONObject(i);
+//                        String pcmgd_latitude = locationObject.getString("pcmgd_latitude");
+//                        String pcmgd_longitude = locationObject.getString("pcmgd_longitude");
+//                        int segment = locationObject.getInt("segment");
+//                        locationLists.add(new LocationLists(pcmgd_latitude,pcmgd_longitude,segment));
+//
+//                    }
+//                }
+//                arrayList.get(index).setLocationLists(locationLists);
+////                System.out.println("number of requests remain: "+numberOfRequestsToMake);
+//                if (numberOfRequestsToMake == 0) {
+//                    if (!hasRequestFailed) {
+//                        conn = true;
+//                        goToProjectLists();
+//                    }
+//                    else {
+//                        conn = false;
+//                        goToProjectLists();
+//                    }
+//                }
+//
+//            } catch (JSONException e) {
+//                numberOfRequestsToMake--;
+//                e.printStackTrace();
+//                hasRequestFailed = true;
+//                if(numberOfRequestsToMake == 0) {
+//                    //The last request failed
+//                    conn = false;
+//                    goToProjectLists();
+//                }
+//            }
+//        }, error -> {
+//            numberOfRequestsToMake--;
+//            hasRequestFailed = true;
+//            if(numberOfRequestsToMake == 0) {
+//                //The last request failed
+//                conn = false;
+//                goToProjectLists();
+//            }
+//        });
+//
+//        requestQueue.add(stringRequest);
+//    }
 
     public void goToProjectLists() {
         waitProgress.dismiss();
@@ -2459,7 +2517,7 @@ public class HomePage extends AppCompatActivity {
                 startActivity(intent);
             }
             else {
-                Toast.makeText(getApplicationContext(),"No Results Found",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"No Project Found",Toast.LENGTH_SHORT).show();
             }
             conn = false;
 
@@ -2718,8 +2776,8 @@ public class HomePage extends AppCompatActivity {
         waitProgress.show(getSupportFragmentManager(), "WaitBar");
         waitProgress.setCancelable(false);
         conn = false;
-        numberOfRequestsToMake = 0;
-        hasRequestFailed = false;
+//        numberOfRequestsToMake = 0;
+//        hasRequestFailed = false;
 
         projectMapsLists = new ArrayList<>();
 
@@ -2771,7 +2829,10 @@ public class HomePage extends AppCompatActivity {
                         String pcm_id = projectMapDataObject.getString("pcm_id");
                         String entry_date = projectMapDataObject.getString("entry_date");
                         String pcm_internal_no = projectMapDataObject.getString("pcm_internal_no");
+
                         String pcm_project_code = projectMapDataObject.getString("pcm_project_code");
+                        pcm_project_code = transformText(pcm_project_code);
+
                         String pcm_user = projectMapDataObject.getString("pcm_user");
 
                         String pcm_project_name = projectMapDataObject.getString("pcm_project_name");
@@ -2863,11 +2924,12 @@ public class HomePage extends AppCompatActivity {
                                 stype,length,width,rownumber_,pCount,new ArrayList<>()));
 
 
-                        numberOfRequestsToMake++;
+//                        numberOfRequestsToMake++;
 //                        System.out.println(projectMapsLists.size() +", index: "+ i + "number of requests: "+ numberOfRequestsToMake);
-                        getMapLocations(pcm_id,i,projectMapsLists);
+//                        getMapLocations(pcm_id,i,projectMapsLists);
 
                     }
+                    getMapLocations();
                 }
                 else {
                     conn = true;
@@ -2887,18 +2949,17 @@ public class HomePage extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
-    public void getMapLocations(String pcm_ID, int index, ArrayList<ProjectMapsLists> arrayList) {
-        String url = "http://103.56.208.123:8086/terrain/bridge_culvert/projects/projectLocation?pcm_id="+pcm_ID;
+    public void getMapLocations() {
+        String url = "http://103.56.208.123:8086/terrain/bridge_culvert/all_locations/project_locations";
 
         RequestQueue requestQueue = Volley.newRequestQueue(HomePage.this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
             try {
-                numberOfRequestsToMake--;
                 JSONObject jsonObject = new JSONObject(response);
                 String items = jsonObject.getString("items");
                 String count = jsonObject.getString("count");
-                ArrayList<LocationLists> locationLists = new ArrayList<>();
+
                 if (!count.equals("0")) {
                     JSONArray jsonArray = new JSONArray(items);
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -2906,45 +2967,90 @@ public class HomePage extends AppCompatActivity {
                         String pcmgd_latitude = locationObject.getString("pcmgd_latitude");
                         String pcmgd_longitude = locationObject.getString("pcmgd_longitude");
                         int segment = locationObject.getInt("segment");
-                        locationLists.add(new LocationLists(pcmgd_latitude,pcmgd_longitude,segment));
+                        String pcmgd_pcm_id = locationObject.getString("pcmgd_pcm_id");
 
+                        for (int j = 0; j < projectMapsLists.size(); j++) {
+                            if (pcmgd_pcm_id.equals(projectMapsLists.get(j).getPcmId())) {
+                                ArrayList<LocationLists> locationLists = projectMapsLists.get(j).getLocationLists();
+                                locationLists.add(new LocationLists(pcmgd_latitude,pcmgd_longitude,segment));
+                                projectMapsLists.get(j).setLocationLists(locationLists);
+                            }
+                        }
                     }
                 }
-                arrayList.get(index).setLocationLists(locationLists);
-//                System.out.println("number of requests remain: "+numberOfRequestsToMake);
-                if (numberOfRequestsToMake == 0) {
-                    if (!hasRequestFailed) {
-                        conn = true;
-                        goToProjectMapLists();
-                    }
-                    else {
-                        conn = false;
-                        goToProjectMapLists();
-                    }
-                }
+                conn = true;
+                goToProjectMapLists();
 
             } catch (JSONException e) {
-                numberOfRequestsToMake--;
                 e.printStackTrace();
-                hasRequestFailed = true;
-                if(numberOfRequestsToMake == 0) {
-                    //The last request failed
-                    conn = false;
-                    goToProjectMapLists();
-                }
+                conn = false;
+                goToProjectMapLists();
             }
         }, error -> {
-            numberOfRequestsToMake--;
-            hasRequestFailed = true;
-            if(numberOfRequestsToMake == 0) {
-                //The last request failed
-                conn = false;
-                goToProjectLists();
-            }
+            conn = false;
+            goToProjectMapLists();
         });
 
         requestQueue.add(stringRequest);
     }
+//    public void getMapLocations(String pcm_ID, int index, ArrayList<ProjectMapsLists> arrayList) {
+//        String url = "http://103.56.208.123:8086/terrain/bridge_culvert/projects/projectLocation?pcm_id="+pcm_ID;
+//
+//        RequestQueue requestQueue = Volley.newRequestQueue(HomePage.this);
+//
+//        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, response -> {
+//            try {
+//                numberOfRequestsToMake--;
+//                JSONObject jsonObject = new JSONObject(response);
+//                String items = jsonObject.getString("items");
+//                String count = jsonObject.getString("count");
+//                ArrayList<LocationLists> locationLists = new ArrayList<>();
+//                if (!count.equals("0")) {
+//                    JSONArray jsonArray = new JSONArray(items);
+//                    for (int i = 0; i < jsonArray.length(); i++) {
+//                        JSONObject locationObject = jsonArray.getJSONObject(i);
+//                        String pcmgd_latitude = locationObject.getString("pcmgd_latitude");
+//                        String pcmgd_longitude = locationObject.getString("pcmgd_longitude");
+//                        int segment = locationObject.getInt("segment");
+//                        locationLists.add(new LocationLists(pcmgd_latitude,pcmgd_longitude,segment));
+//
+//                    }
+//                }
+//                arrayList.get(index).setLocationLists(locationLists);
+////                System.out.println("number of requests remain: "+numberOfRequestsToMake);
+//                if (numberOfRequestsToMake == 0) {
+//                    if (!hasRequestFailed) {
+//                        conn = true;
+//                        goToProjectMapLists();
+//                    }
+//                    else {
+//                        conn = false;
+//                        goToProjectMapLists();
+//                    }
+//                }
+//
+//            } catch (JSONException e) {
+//                numberOfRequestsToMake--;
+//                e.printStackTrace();
+//                hasRequestFailed = true;
+//                if(numberOfRequestsToMake == 0) {
+//                    //The last request failed
+//                    conn = false;
+//                    goToProjectMapLists();
+//                }
+//            }
+//        }, error -> {
+//            numberOfRequestsToMake--;
+//            hasRequestFailed = true;
+//            if(numberOfRequestsToMake == 0) {
+//                //The last request failed
+//                conn = false;
+//                goToProjectLists();
+//            }
+//        });
+//
+//        requestQueue.add(stringRequest);
+//    }
 
     public void goToProjectMapLists() {
         waitProgress.dismiss();
@@ -2958,7 +3064,7 @@ public class HomePage extends AppCompatActivity {
                 startActivity(intent);
             }
             else {
-                Toast.makeText(getApplicationContext(),"No Results Found",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"No Project Found",Toast.LENGTH_SHORT).show();
             }
 
             conn = false;

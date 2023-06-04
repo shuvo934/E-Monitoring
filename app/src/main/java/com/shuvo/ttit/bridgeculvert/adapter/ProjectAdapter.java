@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -77,6 +78,8 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.PRAHolde
         public TextView finanYear;
         public TextView internalNo;
         public TextView count;
+        public ImageView mapDataImage;
+        public ImageView imageDataImage;
 
         LinearLayout linearLayout;
         ClickedItem mClickedItem;
@@ -94,6 +97,8 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.PRAHolde
             internalNo = itemView.findViewById(R.id.project_internal_no);
             linearLayout = itemView.findViewById(R.id.background_of_p_d);
             count = itemView.findViewById(R.id.project_count);
+            mapDataImage = itemView.findViewById(R.id.map_data_checked_pic);
+            imageDataImage = itemView.findViewById(R.id.image_data_checked_pic);
 
             this.mClickedItem = ci;
             itemView.setOnClickListener(this);
@@ -265,6 +270,18 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.PRAHolde
         holder.internalNo.setText(categoryItem.getPcmInternalNo());
         holder.count.setText(categoryItem.getCount());
 
+        if (categoryItem.isImageData()) {
+            holder.imageDataImage.setBackgroundResource(R.drawable.check_circle_24);
+        }
+        else {
+            holder.imageDataImage.setBackgroundResource(R.drawable.horizontal_rule_24);
+        }
+        if (categoryItem.isMapData()) {
+            holder.mapDataImage.setBackgroundResource(R.drawable.check_circle_24);
+        }
+        else {
+            holder.mapDataImage.setBackgroundResource(R.drawable.horizontal_rule_24);
+        }
         if (selectedPosition == position) {
             holder.linearLayout.setBackgroundColor(Color.parseColor("#dfe6e9"));
         } else {

@@ -130,7 +130,7 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
 
         projectMapAdapter = new ProjectMapAdapter(projectMapsLists, ProjectsMaps.this, ProjectsMaps.this);
 
-        ScaleInAnimationAdapter animationAdapter = new ScaleInAnimationAdapter(projectMapAdapter);
+        AlphaInAnimationAdapter animationAdapter = new AlphaInAnimationAdapter(projectMapAdapter);
         animationAdapter.setDuration(500);
         animationAdapter.setInterpolator(new AccelerateDecelerateInterpolator());
         animationAdapter.setFirstOnly(false);

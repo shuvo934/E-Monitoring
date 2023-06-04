@@ -69,6 +69,9 @@ import static com.shuvo.ttit.bridgeculvert.adapter.ProjectAdapter.locationListsA
 import static com.shuvo.ttit.bridgeculvert.adapter.ProjectMapAdapter.locationListsMapAdapter;
 //import static com.shuvo.ttit.bridgeculvert.connection.OracleConnection.createConnection;
 
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -974,6 +977,7 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
                         String pcof_submitter_name = commentObject.getString("pcof_submitter_name");
                         String pcof_submitter_email = commentObject.getString("pcof_submitter_email");
                         String pcof_submitter_message = commentObject.getString("pcof_submitter_message");
+                        pcof_submitter_message = transformText(pcof_submitter_message);
                         String c_date = commentObject.getString("c_date");
 
                         commentLists.add(new CommentList(pcof_id,pcof_pcm_id,pcof_submitter_name,
@@ -1082,5 +1086,11 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
                 finish();
             });
         }
+    }
+
+    //    --------------------------Transforming Bangla Text-----------------------------
+    private String transformText(String text) {
+        byte[] bytes = text.getBytes(ISO_8859_1);
+        return new String(bytes, UTF_8);
     }
 }

@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary_dupain"
+        android:background="@color/primaryVariant_spray"
         android:padding="16dp">
         <ImageView
             android:layout_width="30dp"
@@ -218,6 +218,37 @@
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/black"/>
+
+                <TextView
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:gravity="center"
+                    android:text="Map Data"
+                    android:textColor="@color/primary_dupain"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/black"/>
+                <TextView
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:gravity="center"
+                    android:text="Image Data"
+                    android:textColor="@color/primary_dupain"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"

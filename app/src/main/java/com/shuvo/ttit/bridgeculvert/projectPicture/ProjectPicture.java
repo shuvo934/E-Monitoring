@@ -444,7 +444,7 @@ public class ProjectPicture extends AppCompatActivity {
             waitProgress.dismiss();
             Toast.makeText(getApplicationContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
             AlertDialog dialog;
-            dialog = new AlertDialog.Builder(getApplicationContext())
+            dialog = new AlertDialog.Builder(ProjectPicture.this)
                     .setMessage("Please Check Your Internet Connection")
                     .setPositiveButton("Retry", null)
                     .setNegativeButton("Cancel",null)

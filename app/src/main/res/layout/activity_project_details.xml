@@ -156,7 +156,7 @@
                             android:layout_marginEnd="5dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/internal_no_pr_details"
@@ -168,6 +168,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -189,7 +190,7 @@
                             android:layout_marginEnd="5dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_no_pr_details"
@@ -201,6 +202,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -222,7 +224,7 @@
                             android:layout_marginEnd="5dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_code_pr_details"
@@ -234,6 +236,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -253,7 +256,7 @@
                             android:layout_marginEnd="3dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_name_pr_details"
@@ -264,6 +267,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -283,7 +287,7 @@
                             android:layout_marginEnd="3dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_measurement_pr_details"
@@ -294,6 +298,7 @@
                             android:text="Length : 1000 Meter [MT] / Width : 3 Meter [MT]"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -313,7 +318,7 @@
                             android:layout_marginEnd="3dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_details_pr_details"
@@ -324,6 +329,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -345,7 +351,7 @@
                             android:layout_marginEnd="5dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_entry_date_pr_details"
@@ -357,6 +363,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -378,7 +385,7 @@
                             android:layout_marginEnd="5dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_start_date_pr_details"
@@ -390,6 +397,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -411,7 +419,7 @@
                             android:layout_marginEnd="5dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_end_date_pr_details"
@@ -423,6 +431,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -444,7 +453,7 @@
                             android:layout_marginEnd="5dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_submitted_by_pr_details"
@@ -456,6 +465,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -477,7 +487,7 @@
                             android:layout_marginEnd="5dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_date_pr_details"
@@ -489,6 +499,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -510,7 +521,7 @@
                             android:layout_marginEnd="5dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_fin_year_pr_details"
@@ -522,6 +533,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -543,7 +555,7 @@
                             android:layout_marginEnd="5dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_value_pr_details"
@@ -555,6 +567,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -576,7 +589,7 @@
                             android:layout_marginEnd="5dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_category_pr_details"
@@ -588,6 +601,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -609,7 +623,7 @@
                             android:layout_marginEnd="5dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_type_pr_details"
@@ -621,6 +635,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -642,7 +657,7 @@
                             android:layout_marginEnd="5dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_fund_name_pr_details"
@@ -654,6 +669,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -675,7 +691,7 @@
                             android:layout_marginEnd="5dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_sanction_cat_pr_details"
@@ -687,6 +703,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -706,7 +723,7 @@
                             android:layout_marginEnd="3dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_pic_det_pr_details"
@@ -717,6 +734,7 @@
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
                             android:textStyle="bold"
+                            android:fontFamily="@font/poppins"
                             />
                     </LinearLayout>
 
@@ -737,7 +755,7 @@
                             android:layout_marginEnd="3dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -767,6 +785,7 @@
                                 android:text="100%"
                                 android:textSize="14sp"
                                 android:textStyle="bold"
+                                android:fontFamily="@font/poppins"
                                 />
 
                         </LinearLayout>
@@ -791,7 +810,7 @@
                             android:layout_marginEnd="3dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -821,6 +840,7 @@
                                 android:layout_marginEnd="3dp"
                                 android:text="100%"
                                 android:textSize="14sp"
+                                android:fontFamily="@font/poppins"
                                 android:textStyle="bold"
                                 />
 
@@ -846,7 +866,7 @@
                             android:layout_marginEnd="3dp"
                             android:textStyle="bold"
                             android:textColor="@color/black"
-                            android:fontFamily="@font/roboto_medium"/>
+                            android:fontFamily="@font/poppins_semibold"/>
 
                         <TextView
                             android:id="@+id/project_evaluation_notes_pr_details"
@@ -856,6 +876,7 @@
                             android:layout_marginEnd="3dp"
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="14sp"
+                            android:fontFamily="@font/poppins"
                             android:textStyle="bold"
                             />
                     </LinearLayout>
@@ -910,7 +931,7 @@
                         android:layout_marginBottom="5dp"
                         android:textStyle="bold"
                         android:textColor="@color/black"
-                        android:fontFamily="@font/roboto_medium"/>
+                        android:fontFamily="@font/poppins_semibold"/>
 
                 <LinearLayout
                     android:id="@+id/comments_layout"
@@ -931,7 +952,7 @@
                         android:layout_marginBottom="5dp"
                         android:textStyle="bold"
                         android:textColor="@color/black"
-                        android:fontFamily="@font/roboto_medium"/>
+                        android:fontFamily="@font/poppins_semibold"/>
 
                     <androidx.cardview.widget.CardView
                         android:layout_width="wrap_content"
@@ -962,6 +983,7 @@
                                 android:layout_gravity="center"
                                 android:textSize="14sp"
                                 android:textColor="@color/black"
+                                android:fontFamily="@font/poppins"
                                 android:textStyle="bold"
                                 />
                         </LinearLayout>
@@ -987,6 +1009,7 @@
                             android:layout_gravity="center"
                             android:text="Internal No/ ক্রমিক নং:"
                             android:textSize="13sp"
+                            android:fontFamily="@font/poppins"
                             android:textStyle="bold"
                             />
                         <TextView
@@ -1000,6 +1023,7 @@
                             android:gravity="end"
                             android:layout_gravity="center"
                             android:text="22-May-21"
+                            android:fontFamily="@font/poppins"
                             android:textSize="12sp"
                             android:textStyle="bold"
                             />

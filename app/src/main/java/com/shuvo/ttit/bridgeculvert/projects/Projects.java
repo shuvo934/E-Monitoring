@@ -44,7 +44,7 @@ public class Projects extends AppCompatActivity implements ProjectAdapter.Clicke
 
 
         projectAdapter = new ProjectAdapter(projectlists, Projects.this, Projects.this);
-        ScaleInAnimationAdapter animationAdapter = new ScaleInAnimationAdapter(projectAdapter);
+        AlphaInAnimationAdapter animationAdapter = new AlphaInAnimationAdapter(projectAdapter);
         animationAdapter.setDuration(500);
         animationAdapter.setInterpolator(new AccelerateDecelerateInterpolator());
         animationAdapter.setFirstOnly(false);
