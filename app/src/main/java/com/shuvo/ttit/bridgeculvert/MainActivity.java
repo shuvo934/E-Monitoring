@@ -13,7 +13,7 @@ import com.shuvo.ttit.bridgeculvert.userChoice.ChooseUser;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Handler mHandler = new Handler();
+    private final Handler mHandler = new Handler();
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {

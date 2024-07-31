@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.shuvo.ttit.bridgeculvert">
+    xmlns:tools="http://schemas.android.com/tools">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -11,6 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
 
     <application
         android:allowBackup="true"
@@ -25,13 +25,17 @@
         android:largeHeap="true"
         tools:targetApi="n">
         <activity android:name=".projectPicture.ProjectPicture"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"/>
         <activity android:name=".threesixtyimage.ThreeSixtyImage"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"/>
         <activity android:name=".userChoice.ChooseUser"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"/>
         <activity android:name=".login.Login"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -47,22 +51,27 @@
         <activity
             android:name=".projectDetails.ProjectDetails"
             android:label="@string/title_activity_project_details"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"/>
         <activity
             android:name=".projectsWithMap.ProjectsMaps"
             android:label="@string/title_activity_projects_maps"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"/>
         <activity
             android:name=".projects.Projects"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"/>
         <activity
             android:name=".mainmenu.HomePage"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity"/>
         <activity android:name=".MainActivity"
             android:screenOrientation="portrait"
-            android:exported="true">
+            android:exported="true"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
