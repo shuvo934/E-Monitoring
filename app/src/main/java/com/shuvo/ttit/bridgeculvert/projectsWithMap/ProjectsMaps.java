@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.graphics.ColorUtils;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,6 +22,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -105,6 +109,15 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_projects_maps);
+        View navScrim = findViewById(R.id.nav_bar_projects_map);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.projects_map_root), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            ViewGroup.LayoutParams lp = navScrim.getLayoutParams();
+            lp.height = systemBars.bottom;
+            navScrim.setLayoutParams(lp);
+            return insets;
+        });
         waitProgress.show(getSupportFragmentManager(),"WaitBar");
         waitProgress.setCancelable(false);
         fullLayout = findViewById(R.id.full_layout_project_map);

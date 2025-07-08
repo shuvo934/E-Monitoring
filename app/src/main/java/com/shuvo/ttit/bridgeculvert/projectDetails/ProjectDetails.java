@@ -16,6 +16,7 @@ import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -29,6 +30,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -172,6 +176,15 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project_details);
+        View navScrim = findViewById(R.id.nav_bar_proj_dtl);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.proj_dtl_root), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            ViewGroup.LayoutParams lp = navScrim.getLayoutParams();
+            lp.height = systemBars.bottom;
+            navScrim.setLayoutParams(lp);
+            return insets;
+        });
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.single_map);
@@ -1027,11 +1040,12 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
                 showAllComm.setVisibility(View.VISIBLE);
             }
 
-            if (available360) {
-                pic360.setVisibility(View.VISIBLE);
-            } else {
-                pic360.setVisibility(View.GONE);
-            }
+//            if (available360) {
+//                pic360.setVisibility(View.VISIBLE);
+//            } else {
+//                pic360.setVisibility(View.GONE);
+//            }
+            pic360.setVisibility(View.GONE);
 
             devProgress.setMax(100);
             finProgress.setMax(100);

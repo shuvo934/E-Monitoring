@@ -4,10 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -15,6 +12,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -22,14 +20,15 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
@@ -39,23 +38,16 @@ import com.shuvo.ttit.bridgeculvert.mainmenu.HomePage;
 import com.shuvo.ttit.bridgeculvert.progressbar.WaitProgress;
 
 
-//import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-//import java.sql.CallableStatement;
-//import java.sql.Connection;
-//import java.sql.ResultSet;
-//import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-//import static com.shuvo.ttit.bridgeculvert.connection.OracleConnection.createConnection;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -117,6 +109,15 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        View navScrim = findViewById(R.id.nav_bar_admin_login);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.admin_login_root), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            ViewGroup.LayoutParams lp = navScrim.getLayoutParams();
+            lp.height = systemBars.bottom;
+            navScrim.setLayoutParams(lp);
+            return insets;
+        });
 
         userInfoLists = new ArrayList<>();
 
@@ -164,7 +165,7 @@ public class Login extends AppCompatActivity {
             }
         }
 
-        System.out.println("OS: " + builder.toString());
+        System.out.println("OS: " + builder);
         //Log.d(LOG_TAG, "OS: " + builder.toString());
 
         //System.out.println("HOSTTTTT: " + getHostName());
@@ -183,89 +184,86 @@ public class Login extends AppCompatActivity {
 
         hostUserName = getHostName("localhost");
 
-        pass.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
-                        actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER &&
-                        event.getKeyCode() == KeyEvent.KEYCODE_NAVIGATE_NEXT) {
-                    if (event == null || !event.isShiftPressed()) {
-                        // the user is done typing.
-                        Log.i("Let see", "Come here");
-                        pass.clearFocus();
-                        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        mgr.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                        closeKeyBoard();
+        pass.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT || event != null && event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER &&
+                    event.getKeyCode() == KeyEvent.KEYCODE_NAVIGATE_NEXT) {
+                if (event == null || !event.isShiftPressed()) {
+                    // the user is done typing.
+                    Log.i("Let see", "Come here");
+                    pass.clearFocus();
+                    InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    mgr.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    closeKeyBoard();
 
-                        return false; // consume.
-                    }
+                    return false; // consume.
                 }
-                return false;
             }
+            return false;
         });
 
-        contact.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String mmm = "info@techterrain-it.com";
-                AlertDialog dialog = new AlertDialog.Builder(Login.this)
-                        .setMessage("Do you want to send an email to "+mmm+" ?")
-                        .setPositiveButton("Yes", null)
-                        .setNegativeButton("No",null)
-                        .show();
+        contact.setOnClickListener(v -> {
+            String mmm = "info@techterrain-it.com";
+            AlertDialog dialog = new AlertDialog.Builder(Login.this)
+                    .setMessage("Do you want to send an email to "+mmm+" ?")
+                    .setPositiveButton("Yes", null)
+                    .setNegativeButton("No",null)
+                    .show();
 
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positive.setOnClickListener(v1 -> {
 
-                        dialog.dismiss();
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        Uri data = Uri.parse("mailto:"+mmm);
-                        intent.setData(data);
-                        try {
-                            startActivity(intent);
+                dialog.dismiss();
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                Uri data = Uri.parse("mailto:"+mmm);
+                intent.setData(data);
+                try {
+                    startActivity(intent);
 
-                        } catch (android.content.ActivityNotFoundException ex) {
-                            Toast.makeText(Login.this, "There is no email app found.", Toast.LENGTH_SHORT).show();
-                        }
+                } catch (android.content.ActivityNotFoundException ex) {
+                    Toast.makeText(Login.this, "There is no email app found.", Toast.LENGTH_SHORT).show();
+                }
 
 
 
-                    }
-                });
-                Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                negative.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-            }
+            });
+            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+            negative.setOnClickListener(v2 -> dialog.dismiss());
         });
 
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        login.setOnClickListener(v -> {
 
-                closeKeyBoard();
+            closeKeyBoard();
 
-                login_failed.setVisibility(View.GONE);
-                userName = Objects.requireNonNull(user.getText()).toString();
-                password = Objects.requireNonNull(pass.getText()).toString();
+            login_failed.setVisibility(View.GONE);
+            userName = Objects.requireNonNull(user.getText()).toString();
+            password = Objects.requireNonNull(pass.getText()).toString();
 
-                if (!userName.isEmpty() && !password.isEmpty()) {
+            if (!userName.isEmpty() && !password.isEmpty()) {
 
 
 //                    new CheckLogin().execute();
-                    getUser();
+                getUser();
 
+            } else {
+                Toast.makeText(getApplicationContext(), "Please Give User Name and Password", Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                View view = Login.this.getCurrentFocus();
+                if (view != null) {
+                    view.clearFocus();
+                    InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    mgr.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 } else {
-                    Toast.makeText(getApplicationContext(), "Please Give User Name and Password", Toast.LENGTH_SHORT).show();
+                    finish();
                 }
-
             }
         });
     }
@@ -307,19 +305,6 @@ public class Login extends AppCompatActivity {
             ex.printStackTrace();
         } // for now eat exceptions
         return "";
-    }
-
-    @Override
-    public void onBackPressed () {
-        View view = this.getCurrentFocus();
-        if (view != null) {
-            view.clearFocus();
-            InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            mgr.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        } else {
-            super.onBackPressed();
-        }
-
     }
 
     private void closeKeyBoard () {
@@ -571,7 +556,7 @@ public class Login extends AppCompatActivity {
             updateInterface();
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 String u_name = userInfoLists.get(0).getUserName();
                 String u_id = userInfoLists.get(0).getUserId();
@@ -602,7 +587,7 @@ public class Login extends AppCompatActivity {
 
                         userInfoLists.add(new UserDetails(id,name,email));
                     }
-                    if (userInfoLists.size() != 0) {
+                    if (!userInfoLists.isEmpty()) {
                         requestQueue.add(loginLogReq);
                     }
                 }
@@ -675,12 +660,9 @@ public class Login extends AppCompatActivity {
 //                dialog.setCancelable(false);
 //                dialog.setCanceledOnTouchOutside(false);
                     Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                    positive.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            getUser();
-                            dialog.dismiss();
-                        }
+                    positive.setOnClickListener(v -> {
+                        getUser();
+                        dialog.dismiss();
                     });
                 }
 
@@ -702,13 +684,10 @@ public class Login extends AppCompatActivity {
 //                dialog.setCancelable(false);
 //                dialog.setCanceledOnTouchOutside(false);
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    getUser();
-                    dialog.dismiss();
-                }
+                getUser();
+                dialog.dismiss();
             });
         }
     }

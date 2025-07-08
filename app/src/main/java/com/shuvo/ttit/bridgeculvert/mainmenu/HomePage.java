@@ -1,14 +1,10 @@
 package com.shuvo.ttit.bridgeculvert.mainmenu;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-//import android.net.ConnectivityManager;
-//import android.net.NetworkInfo;
-//import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,6 +15,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -44,14 +43,8 @@ import com.shuvo.ttit.bridgeculvert.progressbar.WaitProgress;
 import com.shuvo.ttit.bridgeculvert.projects.Projects;
 import com.shuvo.ttit.bridgeculvert.projectsWithMap.ProjectsMaps;
 
-
-//import java.io.IOException;
-//import java.sql.Connection;
-//import java.sql.ResultSet;
-//import java.sql.Statement;
 import java.util.ArrayList;
 
-//import static com.shuvo.ttit.bridgeculvert.connection.OracleConnection.createConnection;
 import static com.shuvo.ttit.bridgeculvert.login.Login.userInfoLists;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
@@ -148,6 +141,15 @@ public class HomePage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+        View navScrim = findViewById(R.id.nav_bar_home_page);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.home_page_root), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            ViewGroup.LayoutParams lp = navScrim.getLayoutParams();
+            lp.height = systemBars.bottom;
+            navScrim.setLayoutParams(lp);
+            return insets;
+        });
 
         userName = findViewById(R.id.user_full_name);
 

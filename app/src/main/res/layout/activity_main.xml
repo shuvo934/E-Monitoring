@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/main_root"
     android:background="@color/primaryVariant_spray"
     tools:context=".MainActivity">
 
@@ -34,6 +35,7 @@
         android:textColor="@color/white"
         android:textSize="22sp"
         android:textStyle="bold" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -63,17 +65,14 @@
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/version_control"
-        android:textColor="@color/white"
-        android:textSize="12sp"
+    <View
+        android:id="@+id/nav_bar_main"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:visibility="gone"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_alignParentStart="true"/>
-
+        android:layout_gravity="bottom"
+        android:background="@color/primaryVariant_spray" />
 
 </RelativeLayout>

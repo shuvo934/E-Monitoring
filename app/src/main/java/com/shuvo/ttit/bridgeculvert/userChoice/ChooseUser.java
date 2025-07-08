@@ -6,13 +6,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -52,51 +57,47 @@ public class ChooseUser extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_user);
+        View navScrim = findViewById(R.id.nav_bar_chose_user);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.chose_user_root), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            ViewGroup.LayoutParams lp = navScrim.getLayoutParams();
+            lp.height = systemBars.bottom;
+            navScrim.setLayoutParams(lp);
+            return insets;
+        });
 
         guest = findViewById(R.id.guest_button);
         admin = findViewById(R.id.admin_button);
         appUpdateManager = AppUpdateManagerFactory.create(ChooseUser.this);
 
-        guest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ChooseUser.this, HomePage.class);
-                intent.putExtra("USER","GUEST");
-                startActivity(intent);
-            }
+        guest.setOnClickListener(view -> {
+            Intent intent = new Intent(ChooseUser.this, HomePage.class);
+            intent.putExtra("USER","GUEST");
+            startActivity(intent);
         });
 
-        admin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ChooseUser.this, Login.class);
-                startActivity(intent);
-            }
+        admin.setOnClickListener(view -> {
+            Intent intent = new Intent(ChooseUser.this, Login.class);
+            startActivity(intent);
         });
+
         getAppUpdate();
-    }
 
-    @Override
-    public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("EXIT!")
-                .setMessage("Do you want to Exit?")
-                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ChooseUser.this);
+                builder.setTitle("EXIT!")
+                        .setMessage("Do you want to Exit?")
+                        .setPositiveButton("YES", (dialog, which) -> System.exit(0))
+                        .setNegativeButton("NO", (dialog, which) -> {
 
-
-                        System.exit(0);
-                    }
-                })
-                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
     }
 
     private void getAppUpdate() {
