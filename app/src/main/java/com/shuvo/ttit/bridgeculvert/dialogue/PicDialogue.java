@@ -1,47 +1,32 @@
 package com.shuvo.ttit.bridgeculvert.dialogue;
 
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-//import android.os.AsyncTask;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDialogFragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.github.chrisbanes.photoview.PhotoView;
 import com.shuvo.ttit.bridgeculvert.R;
-import com.shuvo.ttit.bridgeculvert.adapter.PhotoAdapter;
-import com.shuvo.ttit.bridgeculvert.arraylist.PhotoList;
-import com.shuvo.ttit.bridgeculvert.progressbar.WaitProgress;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-
-import static com.shuvo.ttit.bridgeculvert.adapter.PhotoAdapter.urlFromPhotoAdapter;
-//import static com.shuvo.ttit.bridgeculvert.connection.OracleConnection.createConnection;
-import static com.shuvo.ttit.bridgeculvert.projectDetails.ProjectDetails.PCM_ID_PD;
+import java.util.Objects;
 
 
 public class PicDialogue extends AppCompatDialogFragment {
@@ -66,19 +51,58 @@ public class PicDialogue extends AppCompatDialogFragment {
 //    TextView noPhotoMsg;
 //
 //    ArrayList<PhotoList> photoLists;
+    Bitmap bitmap;
+    String url;
+    public PicDialogue(Bitmap bitmap, String url) {
+        this.bitmap = bitmap;
+        this.url = url;
+    }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         View view = inflater.inflate(R.layout.pic_dial_view, null);
         activity = (AppCompatActivity) view.getContext();
         photoView=  view.findViewById(R.id.photo_view);
         clear = view.findViewById(R.id.clear_image);
 
-        Glide.with(getContext()).load(urlFromPhotoAdapter).error(R.drawable.loading_error).placeholder(R.drawable.loading).into(photoView);
+//        Glide
+//                .with(requireContext())
+//                .load(url)
+//                .error(R.drawable.loading_error)
+//                .placeholder(R.drawable.loading)
+//                .into(photoView);
+
+        Glide.with(requireContext())
+                .load(url)
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.loading_error)
+                .listener(new RequestListener<>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        if (bitmap != null) {
+                            Glide.with(requireContext())
+                                    .load(bitmap)
+                                    .error(R.drawable.loading_error)
+                                    .placeholder(R.drawable.loading)
+                                    .into(photoView);
+                        } else {
+                            // If bitmap is also null, let Glide show the error drawable
+                            photoView.setImageResource(R.drawable.loading_error);
+                        }
+                        return true; // true = we handled the error ourselves
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        return false;
+                    }
+                })
+                .into(photoView);
+
 
 //        recyclerView = view.findViewById(R.id.photo_list_recyclerView);
 //        recyclerView.setHasFixedSize(true);
@@ -98,7 +122,7 @@ public class PicDialogue extends AppCompatDialogFragment {
         alertDialog.setCancelable(false);
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        Objects.requireNonNull(alertDialog.getWindow()).setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
 //        alertDialog.setButton(Dialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
 //            @Override
@@ -107,42 +131,37 @@ public class PicDialogue extends AppCompatDialogFragment {
 //            }
 //        });
 
-        clear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertDialog.dismiss();
-            }
-        });
+        clear.setOnClickListener(view1 -> alertDialog.dismiss());
 
         return alertDialog;
     }
 
-    public boolean isConnected() {
-        boolean connected = false;
-        boolean isMobile = false;
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo nInfo = cm.getActiveNetworkInfo();
-            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-            return connected;
-        } catch (Exception e) {
-            Log.e("Connectivity Exception", e.getMessage());
-        }
-        return connected;
-    }
-
-    public boolean isOnline() {
-
-        Runtime runtime = Runtime.getRuntime();
-        try {
-            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
-            int     exitValue = ipProcess.waitFor();
-            return (exitValue == 0);
-        }
-        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
-
-        return false;
-    }
+//    public boolean isConnected() {
+//        boolean connected = false;
+//        boolean isMobile = false;
+//        try {
+//            ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+//            NetworkInfo nInfo = cm.getActiveNetworkInfo();
+//            connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+//            return connected;
+//        } catch (Exception e) {
+//            Log.e("Connectivity Exception", e.getMessage());
+//        }
+//        return connected;
+//    }
+//
+//    public boolean isOnline() {
+//
+//        Runtime runtime = Runtime.getRuntime();
+//        try {
+//            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+//            int     exitValue = ipProcess.waitFor();
+//            return (exitValue == 0);
+//        }
+//        catch (IOException | InterruptedException e)          { e.printStackTrace(); }
+//
+//        return false;
+//    }
 
 //    public class CheckFORLISt extends AsyncTask<Void, Void, Void> {
 //

@@ -1,8 +1,6 @@
 package com.shuvo.ttit.bridgeculvert.userChoice;
+import static com.shuvo.ttit.bridgeculvert.Constants.api_pre_url;
 
-import static com.google.android.play.core.install.model.AppUpdateType.IMMEDIATE;
-
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,48 +8,32 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.IntentSenderRequest;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.play.core.appupdate.AppUpdateInfo;
-import com.google.android.play.core.appupdate.AppUpdateManager;
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
-import com.google.android.play.core.appupdate.AppUpdateOptions;
-import com.google.android.play.core.install.model.UpdateAvailability;
 import com.shuvo.ttit.bridgeculvert.R;
 import com.shuvo.ttit.bridgeculvert.login.Login;
 import com.shuvo.ttit.bridgeculvert.mainmenu.HomePage;
+import com.shuvo.ttit.bridgeculvert.progressbar.WaitProgress;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 
 
 public class ChooseUser extends AppCompatActivity {
 
     LinearLayout guest;
     LinearLayout admin;
-    AppUpdateManager appUpdateManager;
 
-    ActivityResultLauncher<IntentSenderRequest> activityResultLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(),
-                    result -> {
-                        if (result.getResultCode() != RESULT_OK) {
-
-                            MaterialAlertDialogBuilder alertDialogBuilder = new MaterialAlertDialogBuilder(ChooseUser.this)
-                                    .setTitle("Update Failed!")
-                                    .setMessage("Failed to update the app. Please retry again.")
-                                    .setIcon(R.drawable.bd_icon)
-                                    .setPositiveButton("Retry", (dialog, which) -> getAppUpdate())
-                                    .setNegativeButton("Cancel", (dialog, which) -> finish());
-                            AlertDialog alertDialog = alertDialogBuilder.create();
-                            alertDialog.show();
-                        }
-                    });
+    WaitProgress waitProgress = new WaitProgress();
+    ArrayList<String> urls;
+    String text_url = "https://raw.githubusercontent.com/shuvo934/Story/refs/heads/master/BridgeCulvertServer";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +51,6 @@ public class ChooseUser extends AppCompatActivity {
 
         guest = findViewById(R.id.guest_button);
         admin = findViewById(R.id.admin_button);
-        appUpdateManager = AppUpdateManagerFactory.create(ChooseUser.this);
 
         guest.setOnClickListener(view -> {
             Intent intent = new Intent(ChooseUser.this, HomePage.class);
@@ -82,7 +63,7 @@ public class ChooseUser extends AppCompatActivity {
             startActivity(intent);
         });
 
-        getAppUpdate();
+        readApiText();
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -90,7 +71,7 @@ public class ChooseUser extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ChooseUser.this);
                 builder.setTitle("EXIT!")
                         .setMessage("Do you want to Exit?")
-                        .setPositiveButton("YES", (dialog, which) -> System.exit(0))
+                        .setPositiveButton("YES", (dialog, which) -> finish())
                         .setNegativeButton("NO", (dialog, which) -> {
 
                         });
@@ -100,60 +81,38 @@ public class ChooseUser extends AppCompatActivity {
         });
     }
 
-    private void getAppUpdate() {
-        System.out.println("HELLO1");
-        Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
-        appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                    && appUpdateInfo.isUpdateTypeAllowed(IMMEDIATE))  {
-//                try {
-//                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo,
-//                            (IntentSenderForResultStarter) activityResultLauncher,
-//                            AppUpdateOptions
-//                                    .newBuilder(IMMEDIATE)
-//                                    .build(),
-//                            10101);
-//                    appUpdateManager.startUpdateFlowForResult(appUpdateInfo,
-//                            Dashboard.this,AppUpdateOptions.newBuilder(IMMEDIATE).build(),
-//                            101010);
-//                } catch (IntentSender.SendIntentException e) {
-//                    e.printStackTrace();
-//                }
-                appUpdateManager.startUpdateFlowForResult(appUpdateInfo,
-                        activityResultLauncher, AppUpdateOptions
-                                .newBuilder(IMMEDIATE)
-                                .build());
+    public void readApiText() {
+        waitProgress.show(getSupportFragmentManager(), "WaitBar");
+        waitProgress.setCancelable(false);
+        new Thread(() -> {
+            urls = new ArrayList<>();
+            try {
+                URL url = new URL(text_url);
+                HttpURLConnection conn=(HttpURLConnection) url.openConnection();
+                conn.setConnectTimeout(60000); // timing out in a minute
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                String str;
+                while ((str = in.readLine()) != null) {
+                    urls.add(str);
+                }
+                in.close();
             }
-            else {
-                System.out.println("No update available");
+            catch (Exception e) {
+                urls.add("http://103.56.208.123:8086/terrain/bridge_culvert/");
             }
-        });
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        appUpdateManager
-                .getAppUpdateInfo()
-                .addOnSuccessListener(
-                        appUpdateInfo -> {
-                            if (appUpdateInfo.updateAvailability()
-                                    == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-                                // If an in-app update is already running, resume the update.
-//                                try {
-//                                    appUpdateManager.startUpdateFlowForResult(
-//                                            appUpdateInfo,
-//                                            this,
-//                                            AppUpdateOptions.defaultOptions(IMMEDIATE),
-//                                            10101);
-//                                } catch (IntentSender.SendIntentException e) {
-//                                    e.printStackTrace();
-//                                }
-                                appUpdateManager.startUpdateFlowForResult(appUpdateInfo,
-                                        activityResultLauncher,AppUpdateOptions
-                                                .newBuilder(IMMEDIATE)
-                                                .build());
-                            }
-                        });
+            runOnUiThread(() -> {
+                if (urls.isEmpty()) {
+                    api_pre_url = "http://103.56.208.123:8086/terrain/bridge_culvert/";
+                }
+                else {
+                    for (int i = 0; i < urls.size(); i++) {
+                        api_pre_url= urls.get(i);
+                    }
+                }
+                waitProgress.dismiss();
+            });
+
+        }).start();
     }
 }

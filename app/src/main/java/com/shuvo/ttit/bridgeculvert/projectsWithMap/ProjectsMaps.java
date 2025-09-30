@@ -1,5 +1,6 @@
 package com.shuvo.ttit.bridgeculvert.projectsWithMap;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -7,7 +8,6 @@ import androidx.core.graphics.ColorUtils;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,17 +58,11 @@ import com.shuvo.ttit.bridgeculvert.progressbar.WaitProgress;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
-import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
-import jp.wasabeef.recyclerview.adapters.SlideInRightAnimationAdapter;
 
 import static com.shuvo.ttit.bridgeculvert.mainmenu.HomePage.projectMapsLists;
 
@@ -85,8 +79,6 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
     ArrayList<MarkerData> markerData;
     ArrayList<PolyLindata> polyLindata;
     public static int selectedAdapterPosition = -1;
-    public static int viewTop = 0;
-    public static int viewBottom = 0;
 
     private Spinner selection;
 
@@ -127,6 +119,7 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+        assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
         itemView = findViewById(R.id.project_location_details_review);
@@ -156,40 +149,45 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
 
         markerData = new ArrayList<>();
         polyLindata = new ArrayList<>();
-        List<String> categories = new ArrayList<String>();
+        List<String> categories = new ArrayList<>();
         categories.add("NORMAL");
         categories.add("SATELLITE");
         categories.add("TERRAIN");
         categories.add("HYBRID");
         categories.add("NO LANDMARK");
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item, categories);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.spinner_item, categories);
 
         spinnerAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
 
         selection.setAdapter(spinnerAdapter);
 
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        imageView.setOnClickListener(view -> {
 
-                if (!fullScreen) {
-                    projectCard.setVisibility(View.GONE);
-                    imageView.setImageResource(R.drawable.fullscreen_exit);
-                    fullScreen = true;
-                } else {
-                    projectCard.setVisibility(View.VISIBLE);
-                    imageView.setImageResource(R.drawable.fullscreen);
-                    fullScreen = false;
-                }
-
-
+            if (!fullScreen) {
+                projectCard.setVisibility(View.GONE);
+                imageView.setImageResource(R.drawable.fullscreen_exit);
+                fullScreen = true;
+            } else {
+                projectCard.setVisibility(View.VISIBLE);
+                imageView.setImageResource(R.drawable.fullscreen);
+                fullScreen = false;
             }
+
+
         });
 
         String text = "Total " + projectMapsLists.size() + " Projects";
         totalProjects.setText(text);
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                selectedAdapterPosition = -1;
+                finish();
+            }
+        });
     }
 
     /**
@@ -202,7 +200,7 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
         mMap.getUiSettings().setZoomControlsEnabled(true);
@@ -211,7 +209,7 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
         //LatLng bangladesh = new LatLng(23.664745, 90.167949);
         //23.8925766816657, 90.26834454129256;
         //LatLng bangladesh = new LatLng(23.9697833326, 90.2372869849);
-        LatLng bangladesh = new LatLng(23.8925766816657, 90.26834454129256);
+//        LatLng bangladesh = new LatLng(23.8925766816657, 90.26834454129256);
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
 //        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bangladesh, 10));
 
@@ -278,12 +276,12 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
         markerCollection.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
             @Override
-            public View getInfoWindow(Marker arg0) {
+            public View getInfoWindow(@NonNull Marker arg0) {
                 return null;
             }
 
             @Override
-            public View getInfoContents(Marker marker) {
+            public View getInfoContents(@NonNull Marker marker) {
 
                 LinearLayout info = new LinearLayout(getApplicationContext());
                 info.setOrientation(LinearLayout.VERTICAL);
@@ -315,7 +313,7 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
             String length = projectMapsLists.get(i).getLength();
             String width = projectMapsLists.get(i).getWidth();
             String stype = projectMapsLists.get(i).getSanctionType();
-            String totalVal = "";
+            String totalVal;
             if (stype.contains("Taka")) {
                 DecimalFormat formatter = new DecimalFormat("##,##,##,###");
                 double val = 0.0;
@@ -348,7 +346,7 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
 //            if (date != null) {
 //                proDate = sdf.format(date);
 //            }
-            if (locationLists.size() != 0) {
+            if (!locationLists.isEmpty()) {
                 String snippet = "Project No (প্রকল্প নং): " + proNo + "\nProject Code (প্রকল্প কোড) [জিও]: " + projectCode + "\nProject Date: " + proDate + "\nLength: " + length + "\nWidth: " + width +
                         "\nEstimated Value: " + totalVal + "\nFinancial Year: " + finYear;
                 if (locationLists.size() == 1 ) {
@@ -449,18 +447,16 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
 
-        markerCollection.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(@NonNull Marker marker) {
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 15));
+        markerCollection.setOnMarkerClickListener(marker -> {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 15));
 
-                String pcmId = "";
-                for (int i = 0 ; i < markerData.size(); i++) {
-                    Marker marker1 = markerData.get(i).getMarker();
-                    boolean isPoly = markerData.get(i).isPoly();
-                    if (!isPoly) {
-                        marker1.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_micro_18));
-                    }
+            String pcmId = "";
+            for (int i = 0 ; i < markerData.size(); i++) {
+                Marker marker1 = markerData.get(i).getMarker();
+                boolean isPoly = markerData.get(i).isPoly();
+                if (!isPoly) {
+                    marker1.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_micro_18));
+                }
 //                    else {
 //                        for (int j = 0; j < polyLindata.size(); j++) {
 //                            Polyline polyline = polyLindata.get(j).getPolyline();
@@ -468,30 +464,30 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
 //                            polyline.setWidth(16);
 //                        }
 //                    }
-                    String id = marker.getId();
-                    String allId = marker1.getId();
+                String id = marker.getId();
+                String allId = marker1.getId();
 
 
-                    if (id.equals(allId)) {
-                        if (!isPoly) {
-                            marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_micro_24_select));
-                            pcmId = markerData.get(i).getId();
-                            for (int j = 0 ; j< projectMapsLists.size(); j++) {
-                                String marId = projectMapsLists.get(j).getPcmId();
-                                if (pcmId.equals(marId)) {
-                                    selectedAdapterPosition = j;
-                                }
+                if (id.equals(allId)) {
+                    if (!isPoly) {
+                        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_micro_24_select));
+                        pcmId = markerData.get(i).getId();
+                        for (int j = 0 ; j< projectMapsLists.size(); j++) {
+                            String marId = projectMapsLists.get(j).getPcmId();
+                            if (pcmId.equals(marId)) {
+                                selectedAdapterPosition = j;
                             }
                         }
-                        else {
-                            pcmId = markerData.get(i).getId();
-                            for (int j = 0 ; j< projectMapsLists.size(); j++) {
-                                String marId = projectMapsLists.get(j).getPcmId();
-                                if (pcmId.equals(marId)) {
-                                    selectedAdapterPosition = j;
-                                }
+                    }
+                    else {
+                        pcmId = markerData.get(i).getId();
+                        for (int j = 0 ; j< projectMapsLists.size(); j++) {
+                            String marId = projectMapsLists.get(j).getPcmId();
+                            if (pcmId.equals(marId)) {
+                                selectedAdapterPosition = j;
                             }
                         }
+                    }
 //                        else {
 //                            for (int j = 0; j < polyLindata.size(); j++) {
 //                                Polyline polyline = polyLindata.get(j).getPolyline();
@@ -510,56 +506,52 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
 //                            }
 //                        }
 
-                    }
                 }
-                if (!pcmId.isEmpty()) {
-                    for (int i = 0 ; i < polyLindata.size(); i++) {
-
-                        //System.out.println("PCMID: "+pcmId);
-                        Polyline polyline = polyLindata.get(i).getPolyline();
-                        String poid = polyLindata.get(i).getId();
-                        if (poid.equals(pcmId)) {
-                            polyline.setColor(Color.parseColor("#0984e3"));
-                            polyline.setWidth(30);
-                            //                            int size = polyline.getPoints().size();
-                            //                            size = size / 2;
-                            //                            double latitude = polyline.getPoints().get(size).latitude;
-                            //                            double longitude = polyline.getPoints().get(size).longitude;
-                            //                            LatLng gpx = new LatLng(latitude, longitude);
-                            //                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gpx, 15));
-                        } else {
-                            polyline.setColor(Color.BLACK);
-                            polyline.setWidth(16);
-                        }
-
-                    }
-                }
-
-                projectMapAdapter.notifyDataSetChanged();
-                itemView.scrollToPosition(selectedAdapterPosition);
-                return false;
             }
+            if (!pcmId.isEmpty()) {
+                for (int i = 0 ; i < polyLindata.size(); i++) {
+
+                    //System.out.println("PCMID: "+pcmId);
+                    Polyline polyline = polyLindata.get(i).getPolyline();
+                    String poid = polyLindata.get(i).getId();
+                    if (poid.equals(pcmId)) {
+                        polyline.setColor(Color.parseColor("#0984e3"));
+                        polyline.setWidth(30);
+                        //                            int size = polyline.getPoints().size();
+                        //                            size = size / 2;
+                        //                            double latitude = polyline.getPoints().get(size).latitude;
+                        //                            double longitude = polyline.getPoints().get(size).longitude;
+                        //                            LatLng gpx = new LatLng(latitude, longitude);
+                        //                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(gpx, 15));
+                    } else {
+                        polyline.setColor(Color.BLACK);
+                        polyline.setWidth(16);
+                    }
+
+                }
+            }
+
+            projectMapAdapter.notifyDataSetChanged();
+            itemView.scrollToPosition(selectedAdapterPosition);
+            return false;
         });
 
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(@NonNull LatLng latLng) {
-                for (int i = 0 ; i < polyLindata.size(); i++) {
-                    Polyline polyline = polyLindata.get(i).getPolyline();
-                    polyline.setColor(Color.BLACK);
-                    polyline.setWidth(16);
-                }
-                for (int i = 0; i < markerData.size(); i++) {
-                    Marker marker = markerData.get(i).getMarker();
-                    boolean isPoly = markerData.get(i).isPoly();
-                    if (!isPoly) {
-                        marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_micro_18));
-                    }
-                    marker.hideInfoWindow();
-                }
-                selectedAdapterPosition = -1;
-                projectMapAdapter.notifyDataSetChanged();
+        mMap.setOnMapClickListener(latLng -> {
+            for (int i = 0 ; i < polyLindata.size(); i++) {
+                Polyline polyline = polyLindata.get(i).getPolyline();
+                polyline.setColor(Color.BLACK);
+                polyline.setWidth(16);
             }
+            for (int i = 0; i < markerData.size(); i++) {
+                Marker marker = markerData.get(i).getMarker();
+                boolean isPoly = markerData.get(i).isPoly();
+                if (!isPoly) {
+                    marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_micro_18));
+                }
+                marker.hideInfoWindow();
+            }
+            selectedAdapterPosition = -1;
+            projectMapAdapter.notifyDataSetChanged();
         });
 
         new LayerOfDisSetup().execute();
@@ -634,12 +626,6 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        selectedAdapterPosition = -1;
-    }
-
-    @Override
     public void onFeatureClick(Feature feature) {
         for (int i = 0 ; i < polyLindata.size(); i++) {
             Polyline polyline = polyLindata.get(i).getPolyline();
@@ -676,7 +662,7 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
                         //System.out.println(0);
 
                     } catch (JSONException | IOException e) {
-                        e.printStackTrace();
+                        System.out.println(e.getLocalizedMessage());
                     }
                 }
                 else {
@@ -685,7 +671,7 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
                         //System.out.println(0);
 
                     } catch (JSONException | IOException e) {
-                        e.printStackTrace();
+                        System.out.println(e.getLocalizedMessage());
                     }
                 }
             }
@@ -695,7 +681,7 @@ public class ProjectsMaps extends AppCompatActivity implements OnMapReadyCallbac
                     //System.out.println(0);
 
                 } catch (JSONException | IOException e) {
-                    e.printStackTrace();
+                    System.out.println(e.getLocalizedMessage());
                 }
             }
 

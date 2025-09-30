@@ -21,26 +21,18 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
 import com.shuvo.ttit.bridgeculvert.R;
 import com.shuvo.ttit.bridgeculvert.progressbar.WaitProgress;
-
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-//import static com.shuvo.ttit.bridgeculvert.connection.OracleConnection.createConnection;
+import static com.shuvo.ttit.bridgeculvert.Constants.api_pre_url;
 import static com.shuvo.ttit.bridgeculvert.projectDetails.ProjectDetails.PCM_ID_PD;
 
 import org.json.JSONException;
@@ -76,11 +68,11 @@ public class CommentsDialogue extends AppCompatDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         View view = inflater.inflate(R.layout.comment_dialogue_view, null);
-        activity = (AppCompatActivity) view.getContext();
+        activity = (AppCompatActivity) requireContext();
 
         name = view.findViewById(R.id.name_edit);
         comment = view.findViewById(R.id.comment_edit);
@@ -102,74 +94,57 @@ public class CommentsDialogue extends AppCompatDialogFragment {
         alertDialog.setCancelable(false);
         alertDialog.setCanceledOnTouchOutside(false);
 
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertDialog.dismiss();
-            }
-        });
+        cancel.setOnClickListener(view1 -> alertDialog.dismiss());
 
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                System.out.println("ASHE POSITIVE");
+        submit.setOnClickListener(view2 -> {
+            System.out.println("ASHE POSITIVE");
 
 
-                nameOfUser = name.getText().toString();
-                emailOfUser = email.getText().toString();
-                commentOfUser = comment.getText().toString();
+            nameOfUser = Objects.requireNonNull(name.getText()).toString();
+            emailOfUser = Objects.requireNonNull(email.getText()).toString();
+            commentOfUser = Objects.requireNonNull(comment.getText()).toString();
 
 
-                if (!nameOfUser.isEmpty()) {
-                    System.out.println("NAME");
-                    nameMiss.setVisibility(View.GONE);
+            if (!nameOfUser.isEmpty()) {
+                System.out.println("NAME");
+                nameMiss.setVisibility(View.GONE);
 
-                    if (!emailOfUser.isEmpty()) {
-                        System.out.println("EMAIL");
-                        emailMiss.setVisibility(View.GONE);
+                if (!emailOfUser.isEmpty()) {
+                    System.out.println("EMAIL");
+                    emailMiss.setVisibility(View.GONE);
 
-                        if (!commentOfUser.isEmpty()) {
-                            System.out.println("COMMENT");
-                            commentMiss.setVisibility(View.GONE);
-                            AlertDialog dialog;
-                            dialog = new AlertDialog.Builder(getContext())
-                                    .setMessage("Do you want to submit your Comment?")
-                                    .setPositiveButton("Yes", null)
-                                    .setNegativeButton("No",null)
-                                    .show();
+                    if (!commentOfUser.isEmpty()) {
+                        System.out.println("COMMENT");
+                        commentMiss.setVisibility(View.GONE);
+                        AlertDialog dialog;
+                        dialog = new AlertDialog.Builder(requireContext())
+                                .setMessage("Do you want to submit your Comment?")
+                                .setPositiveButton("Yes", null)
+                                .setNegativeButton("No",null)
+                                .show();
 
-                            dialog.setCancelable(false);
-                            dialog.setCanceledOnTouchOutside(false);
-                            Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                            positive.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
+                        dialog.setCancelable(false);
+                        dialog.setCanceledOnTouchOutside(false);
+                        Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                        positive.setOnClickListener(v -> {
 
 //                                    new Check().execute();
-                                    postComment();
-                                    dialog.dismiss();
-                                }
-                            });
+                            postComment();
+                            dialog.dismiss();
+                        });
 
-                            Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-                            negative.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                   dialog.dismiss();
-
-                                }
-                            });
-                        }
-                        else {
-                            commentMiss.setVisibility(View.VISIBLE);
-                        }
+                        Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+                        negative.setOnClickListener(v -> dialog.dismiss());
                     }
                     else {
-                        emailMiss.setVisibility(View.VISIBLE);
+                        commentMiss.setVisibility(View.VISIBLE);
                     }
-                } else {
-                    nameMiss.setVisibility(View.VISIBLE);
                 }
+                else {
+                    emailMiss.setVisibility(View.VISIBLE);
+                }
+            } else {
+                nameMiss.setVisibility(View.VISIBLE);
             }
         });
 
@@ -389,9 +364,9 @@ public class CommentsDialogue extends AppCompatDialogFragment {
         conn = false;
         connected = false;
 
-        String post_url = "http://103.56.208.123:8086/terrain/bridge_culvert/comments/uploadComments";
+        String post_url = api_pre_url+"comments/uploadComments";
 
-        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, post_url, response -> {
             try {
@@ -407,7 +382,6 @@ public class CommentsDialogue extends AppCompatDialogFragment {
                     updateUI();
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
                 conn = false;
                 updateUI();
             }
@@ -416,7 +390,7 @@ public class CommentsDialogue extends AppCompatDialogFragment {
             updateUI();
         }) {
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("pcm_id",pcm);
                 headers.put("submitter_name",nameOfUser);
@@ -434,13 +408,13 @@ public class CommentsDialogue extends AppCompatDialogFragment {
         if (conn) {
             waitProgress.dismiss();
             if (connected) {
-                Toast.makeText(getContext(), "Comment Submitted Successfully!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Comment Submitted Successfully!", Toast.LENGTH_SHORT).show();
                 alertDialog.dismiss();
             }
             else {
-                Toast.makeText(getContext(), "Comment Failed to Submit", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Comment Failed to Submit", Toast.LENGTH_SHORT).show();
                 AlertDialog dialog;
-                dialog = new AlertDialog.Builder(getContext())
+                dialog = new AlertDialog.Builder(requireContext())
                         .setMessage("Comment Submission Failed")
                         .setPositiveButton("Retry", null)
                         .setNegativeButton("Cancel",null)
@@ -449,24 +423,21 @@ public class CommentsDialogue extends AppCompatDialogFragment {
 //            dialog.setCancelable(false);
 //            dialog.setCanceledOnTouchOutside(false);
                 Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                positive.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                positive.setOnClickListener(v -> {
 
-                        conn = false;
-                        connected = false;
-                        postComment();
-                        dialog.dismiss();
-                    }
+                    conn = false;
+                    connected = false;
+                    postComment();
+                    dialog.dismiss();
                 });
             }
 
         }
         else {
             waitProgress.dismiss();
-            Toast.makeText(getContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "No Internet Connection", Toast.LENGTH_SHORT).show();
             AlertDialog dialog;
-            dialog = new AlertDialog.Builder(getContext())
+            dialog = new AlertDialog.Builder(requireContext())
                     .setMessage("Please Check Your Internet Connection")
                     .setPositiveButton("Retry", null)
                     .setNegativeButton("Cancel",null)
@@ -475,13 +446,10 @@ public class CommentsDialogue extends AppCompatDialogFragment {
 //            dialog.setCancelable(false);
 //            dialog.setCanceledOnTouchOutside(false);
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    postComment();
-                    dialog.dismiss();
-                }
+                postComment();
+                dialog.dismiss();
             });
         }
     }

@@ -1,11 +1,5 @@
 package com.shuvo.ttit.bridgeculvert.connection;
 
-import android.content.Context;
-import android.database.SQLException;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-
 public class OracleConnection {
 //    private static final String DEFAULT_DRIVER = "oracle.jdbc.driver.OracleDriver";
 //    //private static final String DEFAULT_URL = "jdbc:oracle:thin:@192.168.1.5:1521:TT";

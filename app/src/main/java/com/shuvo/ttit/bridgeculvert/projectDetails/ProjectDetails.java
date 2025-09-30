@@ -2,6 +2,7 @@ package com.shuvo.ttit.bridgeculvert.projectDetails;
 
 //import android.annotation.SuppressLint;
 //import android.content.Context;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -28,6 +29,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -36,8 +38,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -68,7 +68,10 @@ import com.shuvo.ttit.bridgeculvert.threesixtyimage.ThreeSixtyImage;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import static com.shuvo.ttit.bridgeculvert.Constants.api_pre_url;
 import static com.shuvo.ttit.bridgeculvert.adapter.ProjectAdapter.locationListsAdapter;
 import static com.shuvo.ttit.bridgeculvert.adapter.ProjectMapAdapter.locationListsMapAdapter;
 //import static com.shuvo.ttit.bridgeculvert.connection.OracleConnection.createConnection;
@@ -170,6 +173,7 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
 
     LinearLayout noMap;
 
+    Logger logger = Logger.getLogger(ProjectDetails.class.getName());
 //    boolean enable = false;
 
     @Override
@@ -330,57 +334,42 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
 //            }
 //        });
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        imageView.setOnClickListener(view -> {
 
-                if (!fullScreen) {
-                    scrollView.setVisibility(View.GONE);
-                    imageView.setImageResource(R.drawable.fullscreen_exit);
-                    fullScreen = true;
-                } else {
-                    scrollView.setVisibility(View.VISIBLE);
-                    imageView.setImageResource(R.drawable.fullscreen);
-                    fullScreen = false;
-                }
-
-
+            if (!fullScreen) {
+                scrollView.setVisibility(View.GONE);
+                imageView.setImageResource(R.drawable.fullscreen_exit);
+                fullScreen = true;
+            } else {
+                scrollView.setVisibility(View.VISIBLE);
+                imageView.setImageResource(R.drawable.fullscreen);
+                fullScreen = false;
             }
+
+
         });
 
-        postComment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CommentsDialogue commentsDialogue = new CommentsDialogue();
-                commentsDialogue.show(getSupportFragmentManager(),"COMMENT");
-            }
+        postComment.setOnClickListener(view -> {
+            CommentsDialogue commentsDialogue = new CommentsDialogue();
+            commentsDialogue.show(getSupportFragmentManager(),"COMMENT");
         });
 
-        showAllComm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ShowCommentsDialogue showCommentsDialogue = new ShowCommentsDialogue();
-                showCommentsDialogue.show(getSupportFragmentManager(),"SHOWCOMMENT");
-            }
+        showAllComm.setOnClickListener(view -> {
+            ShowCommentsDialogue showCommentsDialogue = new ShowCommentsDialogue();
+            showCommentsDialogue.show(getSupportFragmentManager(),"SHOWCOMMENT");
         });
 
-        projectPic.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        projectPic.setOnClickListener(view -> {
 
-                Intent intent1 = new Intent(ProjectDetails.this, ProjectPicture.class);
-                startActivity(intent1);
+            Intent intent1 = new Intent(ProjectDetails.this, ProjectPicture.class);
+            startActivity(intent1);
 //                PicDialogue picDialogue = new PicDialogue();
 //                picDialogue.show(getSupportFragmentManager(),"PICTURE");
-            }
         });
 
-        pic360.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent1 = new Intent(ProjectDetails.this, ThreeSixtyImage.class);
-                startActivity(intent1);
-            }
+        pic360.setOnClickListener(view -> {
+            Intent intent1 = new Intent(ProjectDetails.this, ThreeSixtyImage.class);
+            startActivity(intent1);
         });
 
 //        new CommentCheck().execute();
@@ -396,8 +385,9 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    @SuppressLint("PotentialBehaviorOverride")
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
 
         mMap.getUiSettings().setZoomControlsEnabled(true);
@@ -462,12 +452,12 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
         mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
             @Override
-            public View getInfoWindow(Marker arg0) {
+            public View getInfoWindow(@NonNull Marker arg0) {
                 return null;
             }
 
             @Override
-            public View getInfoContents(Marker marker) {
+            public View getInfoContents(@NonNull Marker marker) {
 
                 LinearLayout info = new LinearLayout(getApplicationContext());
                 info.setOrientation(LinearLayout.VERTICAL);
@@ -489,7 +479,7 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
             }
         });
 
-        if (locationListsDial.size() != 0) {
+        if (!locationListsDial.isEmpty()) {
             noMap.setVisibility(View.GONE);
             if (locationListsDial.size() == 1 ) {
                 LatLng latLng = new LatLng(Double.parseDouble(locationListsDial.get(0).getLatitude()),Double.parseDouble(locationListsDial.get(0).getLongitude()));
@@ -876,10 +866,10 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
 
         commentLists = new ArrayList<>();
 
-        String comments_url = "http://103.56.208.123:8086/terrain/bridge_culvert/comments/getComments?pcm_id="+PCM_ID_PD;
-        String threeSixtyImage_url = "http://103.56.208.123:8086/terrain/bridge_culvert/images/get_three_sixty?pcm_id="+PCM_ID_PD;
-        String devProgress_url = "http://103.56.208.123:8086/terrain/bridge_culvert/progress/gerDevelopmentProgress?pcm_id="+PCM_ID_PD;
-        String finProgress_url = "http://103.56.208.123:8086/terrain/bridge_culvert/progress/getFinancialProgress?pcm_id="+PCM_ID_PD;
+        String comments_url = api_pre_url + "comments/getComments?pcm_id="+PCM_ID_PD;
+        String threeSixtyImage_url = api_pre_url + "images/get_three_sixty?pcm_id="+PCM_ID_PD;
+        String devProgress_url = api_pre_url + "progress/gerDevelopmentProgress?pcm_id="+PCM_ID_PD;
+        String finProgress_url = api_pre_url + "progress/getFinancialProgress?pcm_id="+PCM_ID_PD;
 
         RequestQueue requestQueue = Volley.newRequestQueue(ProjectDetails.this);
 
@@ -902,7 +892,7 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
                 conn = true;
                 updateUI();
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 updateUI();
             }
@@ -932,7 +922,7 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
                 requestQueue.add(finProgressRequest);
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 updateUI();
             }
@@ -952,8 +942,8 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
                         JSONObject imageObject = jsonArray.getJSONObject(i);
 
                         String ud_db_generated_file_name = imageObject.getString("ud_db_generated_file_name");
-                        String ud_date = imageObject.getString("ud_date");
-                        String ud_doc_upload_stage = imageObject.getString("ud_doc_upload_stage");
+//                        String ud_date = imageObject.getString("ud_date");
+//                        String ud_doc_upload_stage = imageObject.getString("ud_doc_upload_stage");
 
                         URL_360 = "http://103.56.208.123:8863/assets/project_image/" +ud_db_generated_file_name;
                         available360 = true;
@@ -966,7 +956,7 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
                 requestQueue.add(devProgressRequest);
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 updateUI();
             }
@@ -1000,7 +990,7 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
                 requestQueue.add(threeSixtyImageRequest);
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 updateUI();
             }
@@ -1016,7 +1006,7 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
         waitProgress.dismiss();
         if (conn) {
 
-            if (commentLists.size() == 0) {
+            if (commentLists.isEmpty()) {
                 noCommentMsg.setVisibility(View.VISIBLE);
                 commLay.setVisibility(View.GONE);
                 showAllComm.setVisibility(View.GONE);
@@ -1051,7 +1041,8 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
             finProgress.setMax(100);
             devProgress.setProgress(50);
             int devP = (int) developmentProgress;
-            developProText.setText(String.valueOf(devP)+"%");
+            String dt = devP +"%";
+            developProText.setText(dt);
 
             System.out.println("DEVP : " + devP);
             devProgress.setProgress(devP);
@@ -1066,7 +1057,8 @@ public class ProjectDetails extends AppCompatActivity implements OnMapReadyCallb
                 DecimalFormat formatter = new DecimalFormat("###,##,##,###");
                 String formatted = formatter.format(res);
 
-                financeProText.setText(formatted+"%");
+                String ft = formatted+"%";
+                financeProText.setText(ft);
                 System.out.println("FINP : " + formatted);
                 finProgress.setProgress(Integer.parseInt(formatted));
             } else {

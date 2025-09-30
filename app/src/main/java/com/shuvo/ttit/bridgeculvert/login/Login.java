@@ -1,5 +1,7 @@
 package com.shuvo.ttit.bridgeculvert.login;
 
+import static com.shuvo.ttit.bridgeculvert.Constants.api_pre_url;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -48,6 +50,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -103,6 +107,8 @@ public class Login extends AppCompatActivity {
 
     public static ArrayList<UserDetails> userInfoLists;
 
+    Logger logger = Logger.getLogger(Login.class.getName());
+
 
     @SuppressLint("HardwareIds")
     @Override
@@ -155,7 +161,7 @@ public class Login extends AppCompatActivity {
             try {
                 fieldValue = field.getInt(new Object());
             } catch (IllegalArgumentException | IllegalAccessException | NullPointerException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
             }
 
             if (fieldValue == Build.VERSION.SDK_INT) {
@@ -302,7 +308,7 @@ public class Login extends AppCompatActivity {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+//            ex.printStackTrace();
         } // for now eat exceptions
         return "";
     }
@@ -525,8 +531,8 @@ public class Login extends AppCompatActivity {
         connected = false;
         infoConnected = false;
 
-        String get_url = "http://103.56.208.123:8086/terrain/bridge_culvert/admin_users/admin_login/"+userName+"/"+password;
-        String login_log_url = "http://103.56.208.123:8086/terrain/bridge_culvert/admin_users/login_details";
+        String get_url = api_pre_url+"admin_users/admin_login/"+userName+"/"+password;
+        String login_log_url = api_pre_url+"admin_users/login_details";
         userInfoLists = new ArrayList<>();
 
         RequestQueue requestQueue = Volley.newRequestQueue(Login.this);
@@ -546,7 +552,7 @@ public class Login extends AppCompatActivity {
                 }
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 updateInterface();
             }
@@ -597,7 +603,7 @@ public class Login extends AppCompatActivity {
                     updateInterface();
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 updateInterface();
 

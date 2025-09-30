@@ -12,8 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 //import android.net.ConnectivityManager;
 //import android.net.NetworkInfo;
 //import android.os.AsyncTask;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
+import android.util.Base64;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -36,6 +38,7 @@ import com.shuvo.ttit.bridgeculvert.progressbar.WaitProgress;
 import java.util.ArrayList;
 
 //import static com.shuvo.ttit.bridgeculvert.connection.OracleConnection.createConnection;
+import static com.shuvo.ttit.bridgeculvert.Constants.api_pre_url;
 import static com.shuvo.ttit.bridgeculvert.projectDetails.ProjectDetails.PCM_ID_PD;
 
 import org.json.JSONArray;
@@ -58,6 +61,8 @@ public class ProjectPicture extends AppCompatActivity {
     TextView noPhotoMsg;
 
     ArrayList<PhotoList> photoLists;
+
+    boolean imageFailedToLoad = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -382,8 +387,9 @@ public class ProjectPicture extends AppCompatActivity {
         conn = false;
 
         photoLists = new ArrayList<>();
+        imageFailedToLoad = false;
 
-        String image_url = "http://103.56.208.123:8086/terrain/bridge_culvert/images/getImages?pcm_id="+pcm;
+        String image_url = api_pre_url + "images/getImages?pcm_id="+pcm;
 
         RequestQueue requestQueue = Volley.newRequestQueue(ProjectPicture.this);
 
@@ -397,10 +403,21 @@ public class ProjectPicture extends AppCompatActivity {
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject imageObject = jsonArray.getJSONObject(i);
 
+                        String image_name = imageObject.getString("image_name");
                         String ud_db_generated_file_name = imageObject.getString("ud_db_generated_file_name");
                         String ud_date = imageObject.getString("ud_date");
                         String ud_doc_upload_stage = imageObject.getString("ud_doc_upload_stage");
 
+                        Bitmap bitmap = null;
+                        if (image_name.equals("null") || image_name.isEmpty()) {
+                            System.out.println("NULL IMAGE");
+                            imageFailedToLoad = true;
+                        }
+                        else {
+                            byte[] decodedString = Base64.decode(image_name,Base64.DEFAULT);
+                            bitmap = BitmapFactory.decodeByteArray(decodedString,0,decodedString.length);
+                            imageFailedToLoad = bitmap == null;
+                        }
                         String stype = "";
                         switch (ud_doc_upload_stage) {
                             case "1":
@@ -413,17 +430,16 @@ public class ProjectPicture extends AppCompatActivity {
                                 stype = "After Construction";
                                 break;
                         }
-                        String url = "";
+                        String url;
                         url = "http://103.56.208.123:8863/assets/project_image/" +ud_db_generated_file_name;
 
-                        photoLists.add(new PhotoList(url, ud_date, stype));
+                        photoLists.add(new PhotoList(url, ud_date, stype, bitmap, imageFailedToLoad));
 
                     }
                 }
                 conn = true;
                 updatePICUI();
             } catch (JSONException e) {
-                e.printStackTrace();
                 conn = false;
                 updatePICUI();
             }
@@ -440,7 +456,7 @@ public class ProjectPicture extends AppCompatActivity {
         if (conn) {
             conn = false;
 
-            if (photoLists.size() == 0) {
+            if (photoLists.isEmpty()) {
                 noPhotoMsg.setVisibility(View.VISIBLE);
             } else {
                 noPhotoMsg.setVisibility(View.GONE);
@@ -466,22 +482,14 @@ public class ProjectPicture extends AppCompatActivity {
             dialog.setCancelable(false);
             dialog.setCanceledOnTouchOutside(false);
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    getImages();
-                    dialog.dismiss();
-                }
+                getImages();
+                dialog.dismiss();
             });
 
             Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                }
-            });
+            negative.setOnClickListener(v -> dialog.dismiss());
         }
     }
 }

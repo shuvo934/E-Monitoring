@@ -1,7 +1,6 @@
 package com.shuvo.ttit.bridgeculvert.dialogue;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,8 +35,8 @@ public class ShowCommentsDialogue extends AppCompatDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
 
         View view = inflater.inflate(R.layout.show_comments_view, null);
         activity = (AppCompatActivity) view.getContext();
@@ -69,13 +68,7 @@ public class ShowCommentsDialogue extends AppCompatDialogFragment {
 
 
 
-        alertDialog.setButton(Dialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                dialog.dismiss();
-            }
-        });
+        alertDialog.setButton(Dialog.BUTTON_POSITIVE, "OK", (dialog, which) -> dialog.dismiss());
 
         return alertDialog;
     }

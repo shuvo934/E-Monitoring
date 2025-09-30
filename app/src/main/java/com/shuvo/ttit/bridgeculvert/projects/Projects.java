@@ -18,7 +18,6 @@ import com.shuvo.ttit.bridgeculvert.R;
 import com.shuvo.ttit.bridgeculvert.adapter.ProjectAdapter;
 
 import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter;
-import jp.wasabeef.recyclerview.adapters.ScaleInAnimationAdapter;
 
 import static com.shuvo.ttit.bridgeculvert.mainmenu.HomePage.projectlists;
 

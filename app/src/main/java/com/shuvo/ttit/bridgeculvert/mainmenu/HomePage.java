@@ -1,11 +1,9 @@
 package com.shuvo.ttit.bridgeculvert.mainmenu;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -21,8 +20,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputLayout;
@@ -44,7 +41,10 @@ import com.shuvo.ttit.bridgeculvert.projects.Projects;
 import com.shuvo.ttit.bridgeculvert.projectsWithMap.ProjectsMaps;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import static com.shuvo.ttit.bridgeculvert.Constants.api_pre_url;
 import static com.shuvo.ttit.bridgeculvert.login.Login.userInfoLists;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
@@ -93,36 +93,36 @@ public class HomePage extends AppCompatActivity {
 
     String fys_id = "";
     String fye_id = "";
-    String fys_name = "";
-    String fye_name = "";
+//    String fys_name = "";
+//    String fye_name = "";
 
     ArrayList<DivisionLists> divisionLists;
     String div_id = "";
-    String div_name = "";
+//    String div_name = "";
 
     ArrayList<DistrictLists> districtLists;
     String dist_id = "";
-    String dist_name = "";
+//    String dist_name = "";
 
     ArrayList<UpazilaLists> upazilaLists;
     String dd_id = "";
-    String thana_name = "";
+//    String thana_name = "";
 
     ArrayList<UnionLists> unionLists;
     String ddu_id = "";
-    String union_name = "";
+//    String union_name = "";
 
     ArrayList<SourceFundLists> sourceFundLists;
     String fsm_id = "";
-    String fund_name = "";
+//    String fund_name = "";
 
     ArrayList<ProjectTypeLists> projectTypeLists;
     String ptm_id = "";
-    String project_type_name = "";
+//    String project_type_name = "";
 
     ArrayList<ProjectSubTypeLists> projectSubTypeLists;
     String ptd_Id = "";
-    String project_sub_type_name = "";
+//    String project_sub_type_name = "";
 
     public static ArrayList<Projectlists> projectlists;
     public static ArrayList<ProjectMapsLists> projectMapsLists;
@@ -136,6 +136,7 @@ public class HomePage extends AppCompatActivity {
 //    private int numberOfRequestsToMake;
 //    private boolean hasRequestFailed = false;
 
+    Logger logger = Logger.getLogger(HomePage.class.getName());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,310 +214,233 @@ public class HomePage extends AppCompatActivity {
             logOut.setVisibility(View.VISIBLE);
         }
 
-        financialYearStart.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String name = adapterView.getItemAtPosition(i).toString();
-                for (int j = 0; j < fysLists.size(); j++) {
-                    if (name.equals(fysLists.get(j).getFinancialYearName())) {
-                        fys_id = (fysLists.get(j).getFyId());
-                    }
+        financialYearStart.setOnItemClickListener((adapterView, view, i, l) -> {
+            String name = adapterView.getItemAtPosition(i).toString();
+            for (int j = 0; j < fysLists.size(); j++) {
+                if (name.equals(fysLists.get(j).getFinancialYearName())) {
+                    fys_id = (fysLists.get(j).getFyId());
                 }
-                System.out.println(fys_id);
-                if (!fye_id.isEmpty()) {
-                    afterYearSelection.setVisibility(View.VISIBLE);
-                    if (!div_id.isEmpty() && !fys_id.isEmpty() && !fye_id.isEmpty() && !dist_id.isEmpty()) {
-                        search.setEnabled(true);
-                        searchMap.setEnabled(true);
-                    } else {
-                        searchMap.setEnabled(false);
-                        search.setEnabled(false);
-                    }
+            }
+            System.out.println(fys_id);
+            if (!fye_id.isEmpty()) {
+                afterYearSelection.setVisibility(View.VISIBLE);
+                if (!div_id.isEmpty() && !fys_id.isEmpty() && !fye_id.isEmpty() && !dist_id.isEmpty()) {
+                    search.setEnabled(true);
+                    searchMap.setEnabled(true);
+                } else {
+                    searchMap.setEnabled(false);
+                    search.setEnabled(false);
+                }
 //                    search.setEnabled(true);
 //                    searchMap.setEnabled(true);
-                }
             }
         });
 
-        financialYearEnd.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String name = adapterView.getItemAtPosition(i).toString();
-                for (int j = 0; j < fyeLists.size(); j++) {
-                    if (name.equals(fyeLists.get(j).getFinancialYearName())) {
-                        fye_id = (fyeLists.get(j).getFyId());
-                    }
+        financialYearEnd.setOnItemClickListener((adapterView, view, i, l) -> {
+            String name = adapterView.getItemAtPosition(i).toString();
+            for (int j = 0; j < fyeLists.size(); j++) {
+                if (name.equals(fyeLists.get(j).getFinancialYearName())) {
+                    fye_id = (fyeLists.get(j).getFyId());
                 }
-                System.out.println(fye_id);
-                if (!fys_id.isEmpty()) {
-                    afterYearSelection.setVisibility(View.VISIBLE);
-                    if (!div_id.isEmpty() && !fys_id.isEmpty() && !fye_id.isEmpty() && !dist_id.isEmpty()) {
-                        search.setEnabled(true);
-                        searchMap.setEnabled(true);
-                    } else {
-                        searchMap.setEnabled(false);
-                        search.setEnabled(false);
-                    }
+            }
+            System.out.println(fye_id);
+            if (!fys_id.isEmpty()) {
+                afterYearSelection.setVisibility(View.VISIBLE);
+                if (!div_id.isEmpty() && !fys_id.isEmpty() && !fye_id.isEmpty() && !dist_id.isEmpty()) {
+                    search.setEnabled(true);
+                    searchMap.setEnabled(true);
+                } else {
+                    searchMap.setEnabled(false);
+                    search.setEnabled(false);
+                }
 //                    search.setEnabled(true);
 //                    searchMap.setEnabled(true);
-                }
             }
         });
 
-        division.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        division.setOnItemClickListener((adapterView, view, i, l) -> {
 
-                districtLay.setEnabled(false);
-                district.setText("");
-                upazilaLay.setEnabled(false);
-                upazila.setText("");
-                unionLay.setEnabled(false);
-                union.setText("");
-                div_id = "";
-                dist_id = "";
-                dd_id = "";
-                ddu_id = "";
-                String name = adapterView.getItemAtPosition(i).toString();
-                for (int j = 0; j < divisionLists.size(); j++) {
-                    if (name.equals(divisionLists.get(j).getDivName())) {
-                        div_id = (divisionLists.get(j).getDivId());
-                    }
+            districtLay.setEnabled(false);
+            district.setText("");
+            upazilaLay.setEnabled(false);
+            upazila.setText("");
+            unionLay.setEnabled(false);
+            union.setText("");
+            div_id = "";
+            dist_id = "";
+            dd_id = "";
+            ddu_id = "";
+            String name = adapterView.getItemAtPosition(i).toString();
+            for (int j = 0; j < divisionLists.size(); j++) {
+                if (name.equals(divisionLists.get(j).getDivName())) {
+                    div_id = (divisionLists.get(j).getDivId());
                 }
-                if (name.equals("...")) {
-                    division.setText("");
-                }
-                System.out.println(name);
-                System.out.println(div_id);
+            }
+            if (name.equals("...")) {
+                division.setText("");
+            }
+            System.out.println(name);
+            System.out.println(div_id);
 
-                if (!div_id.isEmpty()) {
+            if (!div_id.isEmpty()) {
 //                    new DistrictCheck().execute();
-                    getDistricts();
-                }
-
-                if (!div_id.isEmpty() && !fys_id.isEmpty() && !fye_id.isEmpty() && !dist_id.isEmpty()) {
-                    search.setEnabled(true);
-                    searchMap.setEnabled(true);
-                } else {
-                    searchMap.setEnabled(false);
-                    search.setEnabled(false);
-                }
-
+                getDistricts();
             }
+
+            if (!div_id.isEmpty() && !fys_id.isEmpty() && !fye_id.isEmpty() && !dist_id.isEmpty()) {
+                search.setEnabled(true);
+                searchMap.setEnabled(true);
+            } else {
+                searchMap.setEnabled(false);
+                search.setEnabled(false);
+            }
+
         });
 
-        district.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                upazilaLay.setEnabled(false);
-                upazila.setText("");
-                unionLay.setEnabled(false);
-                union.setText("");
-                dist_id = "";
-                dd_id = "";
-                ddu_id = "";
+        district.setOnItemClickListener((adapterView, view, i, l) -> {
+            upazilaLay.setEnabled(false);
+            upazila.setText("");
+            unionLay.setEnabled(false);
+            union.setText("");
+            dist_id = "";
+            dd_id = "";
+            ddu_id = "";
 
 
-                String name = adapterView.getItemAtPosition(i).toString();
-                for (int j = 0; j < districtLists.size(); j++) {
-                    if (name.equals(districtLists.get(j).getDistName())) {
-                        dist_id = (districtLists.get(j).getDistId());
-                    }
+            String name = adapterView.getItemAtPosition(i).toString();
+            for (int j = 0; j < districtLists.size(); j++) {
+                if (name.equals(districtLists.get(j).getDistName())) {
+                    dist_id = (districtLists.get(j).getDistId());
                 }
+            }
 
-                System.out.println(dist_id);
+            System.out.println(dist_id);
 
-                if (!div_id.isEmpty() && !fys_id.isEmpty() && !fye_id.isEmpty() && !dist_id.isEmpty()) {
-                    search.setEnabled(true);
-                    searchMap.setEnabled(true);
-                } else {
-                    searchMap.setEnabled(false);
-                    search.setEnabled(false);
-                }
+            if (!div_id.isEmpty() && !fys_id.isEmpty() && !fye_id.isEmpty() && !dist_id.isEmpty()) {
+                search.setEnabled(true);
+                searchMap.setEnabled(true);
+            } else {
+                searchMap.setEnabled(false);
+                search.setEnabled(false);
+            }
 
 //                new UpazilaCheck().execute();
-                getUpazilas();
-            }
+            getUpazilas();
         });
 
-        upazila.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        upazila.setOnItemClickListener((adapterView, view, i, l) -> {
 
-                unionLay.setEnabled(false);
-                union.setText("");
-                dd_id = "";
-                ddu_id = "";
+            unionLay.setEnabled(false);
+            union.setText("");
+            dd_id = "";
+            ddu_id = "";
 
-                String name = adapterView.getItemAtPosition(i).toString();
-                for (int j = 0; j < upazilaLists.size(); j++) {
-                    if (name.equals(upazilaLists.get(j).getThanaName())) {
-                        dd_id = (upazilaLists.get(j).getDdId());
-                    }
+            String name = adapterView.getItemAtPosition(i).toString();
+            for (int j = 0; j < upazilaLists.size(); j++) {
+                if (name.equals(upazilaLists.get(j).getThanaName())) {
+                    dd_id = (upazilaLists.get(j).getDdId());
                 }
+            }
 
-                System.out.println(dd_id);
+            System.out.println(dd_id);
 
 //                new UnionCheck().execute();
-                getUnions();
+            getUnions();
 
-            }
         });
 
-        union.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ddu_id = "";
+        union.setOnItemClickListener((adapterView, view, i, l) -> {
+            ddu_id = "";
 
-                String name = adapterView.getItemAtPosition(i).toString();
-                for (int j = 0; j < unionLists.size(); j++) {
-                    if (name.equals(unionLists.get(j).getUnionName())) {
-                        ddu_id = (unionLists.get(j).getDduId());
-                    }
+            String name = adapterView.getItemAtPosition(i).toString();
+            for (int j = 0; j < unionLists.size(); j++) {
+                if (name.equals(unionLists.get(j).getUnionName())) {
+                    ddu_id = (unionLists.get(j).getDduId());
                 }
-
-                System.out.println(ddu_id);
             }
+
+            System.out.println(ddu_id);
         });
 
-        sourceOfFund.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        sourceOfFund.setOnItemClickListener((adapterView, view, i, l) -> {
 
-                fsm_id = "";
+            fsm_id = "";
 
-                String name = adapterView.getItemAtPosition(i).toString();
-                for (int j = 0; j < sourceFundLists.size(); j++) {
-                    if (name.equals(sourceFundLists.get(j).getFundName())) {
-                        fsm_id = (sourceFundLists.get(j).getFsmId());
-                    }
+            String name = adapterView.getItemAtPosition(i).toString();
+            for (int j = 0; j < sourceFundLists.size(); j++) {
+                if (name.equals(sourceFundLists.get(j).getFundName())) {
+                    fsm_id = (sourceFundLists.get(j).getFsmId());
                 }
-
-                if (name.equals("...")) {
-                    sourceOfFund.setText("");
-                }
-
-                System.out.println(fsm_id);
             }
+
+            if (name.equals("...")) {
+                sourceOfFund.setText("");
+            }
+
+            System.out.println(fsm_id);
         });
 
-        projectType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        projectType.setOnItemClickListener((adapterView, view, i, l) -> {
 
-                projectSubTypeLay.setEnabled(false);
-                projectSubType.setText("");
-                ptm_id = "";
-                ptd_Id = "";
-                String name = adapterView.getItemAtPosition(i).toString();
-                for (int j = 0; j < projectTypeLists.size(); j++) {
-                    if (name.equals(projectTypeLists.get(j).getProjectTypeName())) {
-                        ptm_id = (projectTypeLists.get(j).getPtmId());
-                    }
+            projectSubTypeLay.setEnabled(false);
+            projectSubType.setText("");
+            ptm_id = "";
+            ptd_Id = "";
+            String name = adapterView.getItemAtPosition(i).toString();
+            for (int j = 0; j < projectTypeLists.size(); j++) {
+                if (name.equals(projectTypeLists.get(j).getProjectTypeName())) {
+                    ptm_id = (projectTypeLists.get(j).getPtmId());
                 }
-                System.out.println(name);
-                System.out.println(ptm_id);
-                if (name.equals("...")) {
-                    projectType.setText("");
-                }
+            }
+            System.out.println(name);
+            System.out.println(ptm_id);
+            if (name.equals("...")) {
+                projectType.setText("");
+            }
 
-                if (!ptm_id.isEmpty()) {
+            if (!ptm_id.isEmpty()) {
 //                    new ProjectSubTypeCheck().execute();
-                    getProjectSubType();
-                }
-
-
+                getProjectSubType();
             }
+
+
         });
 
-        projectSubType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ptd_Id = "";
-                String name = adapterView.getItemAtPosition(i).toString();
-                for (int j = 0; j < projectSubTypeLists.size(); j++) {
-                    if (name.equals(projectSubTypeLists.get(j).getProjectSubTypeName())) {
-                        ptd_Id = (projectSubTypeLists.get(j).getPtdId());
-                    }
+        projectSubType.setOnItemClickListener((adapterView, view, i, l) -> {
+            ptd_Id = "";
+            String name = adapterView.getItemAtPosition(i).toString();
+            for (int j = 0; j < projectSubTypeLists.size(); j++) {
+                if (name.equals(projectSubTypeLists.get(j).getProjectSubTypeName())) {
+                    ptd_Id = (projectSubTypeLists.get(j).getPtdId());
                 }
-                System.out.println(ptd_Id);
             }
+            System.out.println(ptd_Id);
         });
 
-        search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!fys_id.isEmpty() && !fye_id.isEmpty()) {
+        search.setOnClickListener(view -> {
+            if (!fys_id.isEmpty() && !fye_id.isEmpty()) {
 
 //                    new ProjectDataCheck().execute();
-                    getProjectData();
-                }
+                getProjectData();
             }
         });
 
 
-        searchMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!fys_id.isEmpty() && !fye_id.isEmpty()) {
+        searchMap.setOnClickListener(view -> {
+            if (!fys_id.isEmpty() && !fye_id.isEmpty()) {
 //                    new ProjectMapDataCheck().execute();
-                    getProjectMapData();
-                }
+                getProjectMapData();
             }
         });
 
-        logOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (userType.equals("GUEST")) {
-                    finish();
-                } else if (userType.equals("ADMIN")) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
-                    builder.setTitle("LOG OUT!")
-                            .setMessage("Do you want to Log Out?")
-                            .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-
-                                    userInfoLists.clear();
-                                    userInfoLists = new ArrayList<>();
-
-
-//                        Intent intent = new Intent(HomePage.this, Login.class);
-//                        startActivity(intent);
-                                    finish();
-                                    //System.exit(0);
-                                }
-                            })
-                            .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
-                }
-            }
-        });
-
-
-        getQuery();
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (userType.equals("GUEST")) {
-            super.onBackPressed();
-        } else if (userType.equals("ADMIN")) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
-            builder.setTitle("LOG OUT!")
-                    .setMessage("Do you want to Log Out?")
-                    .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+        logOut.setOnClickListener(view -> {
+            if (userType.equals("GUEST")) {
+                finish();
+            } else if (userType.equals("ADMIN")) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
+                builder.setTitle("LOG OUT!")
+                        .setMessage("Do you want to Log Out?")
+                        .setPositiveButton("YES", (dialog, which) -> {
 
 
                             userInfoLists.clear();
@@ -527,18 +451,47 @@ public class HomePage extends AppCompatActivity {
 //                        startActivity(intent);
                             finish();
                             //System.exit(0);
-                        }
-                    })
-                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        })
+                        .setNegativeButton("NO", (dialog, which) -> {
 
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
-        }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (userType.equals("GUEST")) {
+                    finish();
+                }
+                else if (userType.equals("ADMIN")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(HomePage.this);
+                    builder.setTitle("LOG OUT!")
+                            .setMessage("Do you want to Log Out?")
+                            .setPositiveButton("YES", (dialog, which) -> {
+                                userInfoLists.clear();
+                                userInfoLists = new ArrayList<>();
+
+//                        Intent intent = new Intent(HomePage.this, Login.class);
+//                        startActivity(intent);
+                                finish();
+                                //System.exit(0);
+                            })
+                            .setNegativeButton("NO", (dialog, which) -> {
+
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+            }
+        });
+
+        getQuery();
+
     }
+
 
 //    public boolean isConnected () {
 //        boolean connected = false;
@@ -1215,166 +1168,142 @@ public class HomePage extends AppCompatActivity {
 
         conn = false;
 
-        String fy_url = "http://103.56.208.123:8086/terrain/bridge_culvert/utility_data/fy_lists";
-        String div_url = "http://103.56.208.123:8086/terrain/bridge_culvert/utility_data/division_lists";
-        String fund_url = "http://103.56.208.123:8086/terrain/bridge_culvert/utility_data/source_of_fund_lists";
-        String p_type_url = "http://103.56.208.123:8086/terrain/bridge_culvert/utility_data/project_type_lists";
+        String fy_url = api_pre_url + "utility_data/fy_lists";
+        String div_url = api_pre_url + "utility_data/division_lists";
+        String fund_url = api_pre_url + "utility_data/source_of_fund_lists";
+        String p_type_url = api_pre_url + "utility_data/project_type_lists";
 
         RequestQueue requestQueue = Volley.newRequestQueue(HomePage.this);
 
-        StringRequest projectTypeRequest = new StringRequest(Request.Method.GET, p_type_url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    String items = jsonObject.getString("items");
-                    String count = jsonObject.getString("count");
-                    projectTypeLists.add(new ProjectTypeLists("","..."));
-                    if (!count.equals("0")) {
-                        JSONArray jsonArray = new JSONArray(items);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject pTypeObject = jsonArray.getJSONObject(i);
-                            String p_ptm_id = pTypeObject.getString("p_ptm_id");
-                            String ptm_project_type_name = pTypeObject.getString("ptm_project_type_name");
+        StringRequest projectTypeRequest = new StringRequest(Request.Method.GET, p_type_url, response -> {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                projectTypeLists.add(new ProjectTypeLists("","..."));
+                if (!count.equals("0")) {
+                    JSONArray jsonArray = new JSONArray(items);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject pTypeObject = jsonArray.getJSONObject(i);
+                        String p_ptm_id = pTypeObject.getString("p_ptm_id");
+                        String ptm_project_type_name = pTypeObject.getString("ptm_project_type_name");
 
-                            ptm_project_type_name = transformText(ptm_project_type_name);
+                        ptm_project_type_name = transformText(ptm_project_type_name);
 
-                            projectTypeLists.add(new ProjectTypeLists(p_ptm_id,ptm_project_type_name));
-                        }
+                        projectTypeLists.add(new ProjectTypeLists(p_ptm_id,ptm_project_type_name));
                     }
-                    conn = true;
-                    updateUI();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    conn = false;
-                    updateUI();
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                conn = true;
+                updateUI();
+
+            } catch (JSONException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 updateUI();
             }
+        }, error -> {
+            conn = false;
+            updateUI();
         });
 
-        StringRequest fundRequest = new StringRequest(Request.Method.GET, fund_url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    String items = jsonObject.getString("items");
-                    String count = jsonObject.getString("count");
-                    sourceFundLists.add(new SourceFundLists("","..."));
-                    if (!count.equals("0")) {
-                        JSONArray jsonArray = new JSONArray(items);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject fundObject = jsonArray.getJSONObject(i);
-                            String p_fsm_id = fundObject.getString("p_fsm_id");
-                            String fsm_fund_name = fundObject.getString("fsm_fund_name");
+        StringRequest fundRequest = new StringRequest(Request.Method.GET, fund_url, response -> {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                sourceFundLists.add(new SourceFundLists("","..."));
+                if (!count.equals("0")) {
+                    JSONArray jsonArray = new JSONArray(items);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject fundObject = jsonArray.getJSONObject(i);
+                        String p_fsm_id = fundObject.getString("p_fsm_id");
+                        String fsm_fund_name = fundObject.getString("fsm_fund_name");
 
-                            fsm_fund_name = transformText(fsm_fund_name);
+                        fsm_fund_name = transformText(fsm_fund_name);
 
-                            sourceFundLists.add(new SourceFundLists(p_fsm_id,fsm_fund_name));
-                        }
+                        sourceFundLists.add(new SourceFundLists(p_fsm_id,fsm_fund_name));
                     }
-                    requestQueue.add(projectTypeRequest);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    conn = false;
-                    updateUI();
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                requestQueue.add(projectTypeRequest);
+
+            } catch (JSONException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 updateUI();
             }
+        }, error -> {
+            conn = false;
+            updateUI();
         });
 
-        StringRequest divRequest = new StringRequest(Request.Method.GET, div_url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    String items = jsonObject.getString("items");
-                    String count = jsonObject.getString("count");
-                    if (!count.equals("0")) {
-                        divisionLists.add(new DivisionLists("","..."));
-                        JSONArray jsonArray = new JSONArray(items);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject divObject = jsonArray.getJSONObject(i);
-                            String p_div_id = divObject.getString("p_div_id");
-                            String div_name = divObject.getString("div_name");
+        StringRequest divRequest = new StringRequest(Request.Method.GET, div_url, response -> {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    divisionLists.add(new DivisionLists("","..."));
+                    JSONArray jsonArray = new JSONArray(items);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject divObject = jsonArray.getJSONObject(i);
+                        String p_div_id = divObject.getString("p_div_id");
+                        String div_name = divObject.getString("div_name");
 
-                            div_name = transformText(div_name);
+                        div_name = transformText(div_name);
 
-                            divisionLists.add(new DivisionLists(p_div_id,div_name));
-                        }
-                        requestQueue.add(fundRequest);
+                        divisionLists.add(new DivisionLists(p_div_id,div_name));
                     }
-                    else {
-                        conn = false;
-                        updateUI();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    requestQueue.add(fundRequest);
+                }
+                else {
                     conn = false;
                     updateUI();
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+            } catch (JSONException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 updateUI();
             }
+        }, error -> {
+            conn = false;
+            updateUI();
         });
 
-        StringRequest fyRequest = new StringRequest(Request.Method.GET, fy_url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    String items = jsonObject.getString("items");
-                    String count = jsonObject.getString("count");
-                    if (!count.equals("0")) {
-                        JSONArray jsonArray = new JSONArray(items);
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject fyObject = jsonArray.getJSONObject(i);
-                            String p_fy_id = fyObject.getString("p_fy_id");
-                            String fy_financial_year_name = fyObject.getString("fy_financial_year_name");
-                            String fy_from_year = fyObject.getString("fy_from_year");
-                            String fy_to_year = fyObject.getString("fy_to_year");
-                            String fy_details = fyObject.getString("fy_details");
-                            String fy_active_flag = fyObject.getString("fy_active_flag");
+        StringRequest fyRequest = new StringRequest(Request.Method.GET, fy_url, response -> {
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                String items = jsonObject.getString("items");
+                String count = jsonObject.getString("count");
+                if (!count.equals("0")) {
+                    JSONArray jsonArray = new JSONArray(items);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject fyObject = jsonArray.getJSONObject(i);
+                        String p_fy_id = fyObject.getString("p_fy_id");
+                        String fy_financial_year_name = fyObject.getString("fy_financial_year_name");
+                        String fy_from_year = fyObject.getString("fy_from_year");
+                        String fy_to_year = fyObject.getString("fy_to_year");
+                        String fy_details = fyObject.getString("fy_details");
+                        String fy_active_flag = fyObject.getString("fy_active_flag");
 
-                            fysLists.add(new FinancialYearLists(p_fy_id,fy_financial_year_name,fy_from_year,
-                                    fy_to_year,fy_details,fy_active_flag));
-                            fyeLists.add(new FinancialYearLists(p_fy_id,fy_financial_year_name,fy_from_year,
-                                    fy_to_year,fy_details,fy_active_flag));
-                        }
-                        requestQueue.add(divRequest);
+                        fysLists.add(new FinancialYearLists(p_fy_id,fy_financial_year_name,fy_from_year,
+                                fy_to_year,fy_details,fy_active_flag));
+                        fyeLists.add(new FinancialYearLists(p_fy_id,fy_financial_year_name,fy_from_year,
+                                fy_to_year,fy_details,fy_active_flag));
                     }
-                    else {
-                        conn = false;
-                        updateUI();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    requestQueue.add(divRequest);
+                }
+                else {
                     conn = false;
                     updateUI();
                 }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+            } catch (JSONException e) {
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 updateUI();
             }
+        }, error -> {
+            conn = false;
+            updateUI();
         });
 
         requestQueue.add(fyRequest);
@@ -1388,7 +1317,7 @@ public class HomePage extends AppCompatActivity {
             for(int i = 0; i < fysLists.size(); i++) {
                 type.add(fysLists.get(i).getFinancialYearName());
             }
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
 
             financialYearStart.setAdapter(arrayAdapter);
 
@@ -1396,7 +1325,7 @@ public class HomePage extends AppCompatActivity {
             for(int i = 0; i < fyeLists.size(); i++) {
                 type1.add(fyeLists.get(i).getFinancialYearName());
             }
-            ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<String>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type1);
+            ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type1);
 
             financialYearEnd.setAdapter(arrayAdapter1);
 
@@ -1404,7 +1333,7 @@ public class HomePage extends AppCompatActivity {
             for(int i = 0; i < divisionLists.size(); i++) {
                 type2.add(divisionLists.get(i).getDivName());
             }
-            ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type2);
+            ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type2);
 
             division.setAdapter(arrayAdapter2);
 
@@ -1412,7 +1341,7 @@ public class HomePage extends AppCompatActivity {
             for(int i = 0; i < sourceFundLists.size(); i++) {
                 type3.add(sourceFundLists.get(i).getFundName());
             }
-            ArrayAdapter<String> arrayAdapter3 = new ArrayAdapter<String>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type3);
+            ArrayAdapter<String> arrayAdapter3 = new ArrayAdapter<>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type3);
 
             sourceOfFund.setAdapter(arrayAdapter3);
 
@@ -1420,7 +1349,7 @@ public class HomePage extends AppCompatActivity {
             for(int i = 0; i < projectTypeLists.size(); i++) {
                 type4.add(projectTypeLists.get(i).getProjectTypeName());
             }
-            ArrayAdapter<String> arrayAdapter4 = new ArrayAdapter<String>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type4);
+            ArrayAdapter<String> arrayAdapter4 = new ArrayAdapter<>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type4);
 
             projectType.setAdapter(arrayAdapter4);
 
@@ -1437,27 +1366,21 @@ public class HomePage extends AppCompatActivity {
             dialog.setCancelable(false);
             dialog.setCanceledOnTouchOutside(false);
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    getQuery();
-                    dialog.dismiss();
-                }
+                getQuery();
+                dialog.dismiss();
             });
 
             Button negative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-            negative.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-                    if (userType.equals("GUEST")) {
-                        finish();
-                    } else if (userType.equals("ADMIN")) {
-                        userInfoLists.clear();
-                        userInfoLists = new ArrayList<>();
-                        finish();
-                    }
+            negative.setOnClickListener(v -> {
+                dialog.dismiss();
+                if (userType.equals("GUEST")) {
+                    finish();
+                } else if (userType.equals("ADMIN")) {
+                    userInfoLists.clear();
+                    userInfoLists = new ArrayList<>();
+                    finish();
                 }
             });
         }
@@ -1517,7 +1440,7 @@ public class HomePage extends AppCompatActivity {
             div_id = "";
         }
 
-        String dist_url = "http://103.56.208.123:8086/terrain/bridge_culvert/utility_data/dist_lists?div_id="+div_id;
+        String dist_url = api_pre_url + "utility_data/dist_lists?div_id="+div_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(HomePage.this);
 
@@ -1542,7 +1465,7 @@ public class HomePage extends AppCompatActivity {
                 updateDistricts();
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 updateDistricts();
             }
@@ -1565,7 +1488,7 @@ public class HomePage extends AppCompatActivity {
             for(int i = 0; i < districtLists.size(); i++) {
                 type.add(districtLists.get(i).getDistName());
             }
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
 
             district.setAdapter(arrayAdapter);
 
@@ -1582,13 +1505,10 @@ public class HomePage extends AppCompatActivity {
 //                dialog.setCancelable(false);
 //                dialog.setCanceledOnTouchOutside(false);
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    getDistricts();
-                    dialog.dismiss();
-                }
+                getDistricts();
+                dialog.dismiss();
             });
         }
     }
@@ -1651,7 +1571,7 @@ public class HomePage extends AppCompatActivity {
             dist_id = "";
         }
 
-        String upazila_url = "http://103.56.208.123:8086/terrain/bridge_culvert/utility_data/upazila_lists?dist_id="+dist_id;
+        String upazila_url = api_pre_url + "utility_data/upazila_lists?dist_id="+dist_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(HomePage.this);
 
@@ -1677,7 +1597,7 @@ public class HomePage extends AppCompatActivity {
                 updateUpazila();
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 updateUpazila();
             }
@@ -1699,7 +1619,7 @@ public class HomePage extends AppCompatActivity {
             for(int i = 0; i < upazilaLists.size(); i++) {
                 type.add(upazilaLists.get(i).getThanaName());
             }
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
 
             upazila.setAdapter(arrayAdapter);
 
@@ -1716,13 +1636,10 @@ public class HomePage extends AppCompatActivity {
 //                dialog.setCancelable(false);
 //                dialog.setCanceledOnTouchOutside(false);
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    getUpazilas();
-                    dialog.dismiss();
-                }
+                getUpazilas();
+                dialog.dismiss();
             });
         }
     }
@@ -1784,7 +1701,7 @@ public class HomePage extends AppCompatActivity {
             dd_id = "";
         }
 
-        String union_url = "http://103.56.208.123:8086/terrain/bridge_culvert/utility_data/union_lists?dd_id="+dd_id;
+        String union_url = api_pre_url + "utility_data/union_lists?dd_id="+dd_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(HomePage.this);
 
@@ -1810,7 +1727,7 @@ public class HomePage extends AppCompatActivity {
                 updateUnion();
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 updateUnion();
             }
@@ -1831,7 +1748,7 @@ public class HomePage extends AppCompatActivity {
             for(int i = 0; i < unionLists.size(); i++) {
                 type.add(unionLists.get(i).getUnionName());
             }
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
 
             union.setAdapter(arrayAdapter);
 
@@ -1847,13 +1764,10 @@ public class HomePage extends AppCompatActivity {
 //                dialog.setCancelable(false);
 //                dialog.setCanceledOnTouchOutside(false);
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    getUnions();
-                    dialog.dismiss();
-                }
+                getUnions();
+                dialog.dismiss();
             });
         }
     }
@@ -1912,7 +1826,7 @@ public class HomePage extends AppCompatActivity {
             ptm_id = "";
         }
 
-        String pr_sub_type_url = "http://103.56.208.123:8086/terrain/bridge_culvert/utility_data/project_sub_type_lists?ptm_id="+ptm_id;
+        String pr_sub_type_url = api_pre_url + "utility_data/project_sub_type_lists?ptm_id="+ptm_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(HomePage.this);
 
@@ -1938,7 +1852,7 @@ public class HomePage extends AppCompatActivity {
                 updateProjectSubTypes();
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 updateProjectSubTypes();
             }
@@ -1960,7 +1874,7 @@ public class HomePage extends AppCompatActivity {
             for(int i = 0; i < projectSubTypeLists.size(); i++) {
                 type.add(projectSubTypeLists.get(i).getProjectSubTypeName());
             }
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getApplicationContext(),R.layout.dropdown_menu_popup_item,R.id.drop_down_item,type);
 
             projectSubType.setAdapter(arrayAdapter);
 
@@ -1977,13 +1891,10 @@ public class HomePage extends AppCompatActivity {
 //                dialog.setCancelable(false);
 //                dialog.setCanceledOnTouchOutside(false);
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    getProjectSubType();
-                    dialog.dismiss();
-                }
+                getProjectSubType();
+                dialog.dismiss();
             });
         }
     }
@@ -2257,7 +2168,7 @@ public class HomePage extends AppCompatActivity {
 
         final int[] countingNum = {0};
 
-        String projectDataUrl = "http://103.56.208.123:8086/terrain/bridge_culvert/projects/projectData?ptd_Id="+ptd_Id+"&ptm_id="+ptm_id+
+        String projectDataUrl = api_pre_url + "projects/projectData?ptd_Id="+ptd_Id+"&ptm_id="+ptm_id+
                 "&fsm_id="+fsm_id+"&ddu_id="+ddu_id+"&dd_id="+dd_id+"&dist_id="+dist_id+"&div_id="+div_id+"&fys_id="+fys_id+"&fye_id="+fye_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(HomePage.this);
@@ -2333,12 +2244,12 @@ public class HomePage extends AppCompatActivity {
 
                         String map_data_available = projectDataObject.getString("map_data_available");
 
-                        boolean map_data = false;
+                        boolean map_data;
                         map_data = !map_data_available.equals("0");
 
                         String image_data_available = projectDataObject.getString("image_data_available");
 
-                        boolean image_data = false;
+                        boolean image_data;
                         image_data = !image_data_available.equals("0");
 
                         countingNum[0]++;
@@ -2394,7 +2305,7 @@ public class HomePage extends AppCompatActivity {
                 }
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 goToProjectLists();
             }
@@ -2407,7 +2318,7 @@ public class HomePage extends AppCompatActivity {
     }
 
     public void getLocations() {
-        String url = "http://103.56.208.123:8086/terrain/bridge_culvert/all_locations/project_locations";
+        String url = api_pre_url + "all_locations/project_locations";
 
         RequestQueue requestQueue = Volley.newRequestQueue(HomePage.this);
 
@@ -2439,7 +2350,7 @@ public class HomePage extends AppCompatActivity {
                 goToProjectLists();
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 goToProjectLists();
             }
@@ -2452,7 +2363,7 @@ public class HomePage extends AppCompatActivity {
     }
 //    public void getLocations(String pcm_ID, int index, ArrayList<Projectlists> arrayList) {
 //
-//        String url = "http://103.56.208.123:8086/terrain/bridge_culvert/projects/projectLocation?pcm_id="+pcm_ID;
+//        String url = api_pre_url + "projects/projectLocation?pcm_id="+pcm_ID;
 //
 //        RequestQueue requestQueue = Volley.newRequestQueue(HomePage.this);
 //
@@ -2513,7 +2424,7 @@ public class HomePage extends AppCompatActivity {
     public void goToProjectLists() {
         waitProgress.dismiss();
         if (conn) {
-            if (projectlists.size() != 0) {
+            if (!projectlists.isEmpty()) {
                 System.out.println(projectlists.size());
                 Intent intent = new Intent(HomePage.this, Projects.class);
                 startActivity(intent);
@@ -2534,13 +2445,10 @@ public class HomePage extends AppCompatActivity {
 //                dialog.setCancelable(false);
 //                dialog.setCanceledOnTouchOutside(false);
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    getProjectData();
-                    dialog.dismiss();
-                }
+                getProjectData();
+                dialog.dismiss();
             });
         }
     }
@@ -2813,7 +2721,7 @@ public class HomePage extends AppCompatActivity {
 
         final int[] countingNum = {0};
 
-        String projectMapDataUrl = "http://103.56.208.123:8086/terrain/bridge_culvert/projects/projectMapData?ptd_Id="+ptd_Id+"&ptm_id="+ptm_id+
+        String projectMapDataUrl = api_pre_url + "projects/projectMapData?ptd_Id="+ptd_Id+"&ptm_id="+ptm_id+
                 "&fsm_id="+fsm_id+"&ddu_id="+ddu_id+"&dd_id="+dd_id+"&dist_id="+dist_id+"&div_id="+div_id+"&fys_id="+fys_id+"&fye_id="+fye_id;
 
         RequestQueue requestQueue = Volley.newRequestQueue(HomePage.this);
@@ -2939,7 +2847,7 @@ public class HomePage extends AppCompatActivity {
                 }
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 goToProjectMapLists();
             }
@@ -2952,7 +2860,7 @@ public class HomePage extends AppCompatActivity {
     }
 
     public void getMapLocations() {
-        String url = "http://103.56.208.123:8086/terrain/bridge_culvert/all_locations/project_locations";
+        String url = api_pre_url + "all_locations/project_locations";
 
         RequestQueue requestQueue = Volley.newRequestQueue(HomePage.this);
 
@@ -2984,7 +2892,7 @@ public class HomePage extends AppCompatActivity {
                 goToProjectMapLists();
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, e.getMessage(), e);
                 conn = false;
                 goToProjectMapLists();
             }
@@ -2996,7 +2904,7 @@ public class HomePage extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 //    public void getMapLocations(String pcm_ID, int index, ArrayList<ProjectMapsLists> arrayList) {
-//        String url = "http://103.56.208.123:8086/terrain/bridge_culvert/projects/projectLocation?pcm_id="+pcm_ID;
+//        String url = api_pre_url + "projects/projectLocation?pcm_id="+pcm_ID;
 //
 //        RequestQueue requestQueue = Volley.newRequestQueue(HomePage.this);
 //
@@ -3057,7 +2965,7 @@ public class HomePage extends AppCompatActivity {
     public void goToProjectMapLists() {
         waitProgress.dismiss();
         if (conn) {
-            if (projectMapsLists.size() != 0) {
+            if (!projectMapsLists.isEmpty()) {
                 System.out.println(projectMapsLists.size());
                 Intent intent = new Intent(HomePage.this, ProjectsMaps.class);
                 intent.putExtra("DIST_ID",dist_id);
@@ -3082,13 +2990,10 @@ public class HomePage extends AppCompatActivity {
 //                dialog.setCancelable(false);
 //                dialog.setCanceledOnTouchOutside(false);
             Button positive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            positive.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            positive.setOnClickListener(v -> {
 
-                    getProjectMapData();
-                    dialog.dismiss();
-                }
+                getProjectMapData();
+                dialog.dismiss();
             });
         }
     }

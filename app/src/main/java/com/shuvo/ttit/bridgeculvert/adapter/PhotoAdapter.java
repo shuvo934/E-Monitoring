@@ -1,6 +1,7 @@
 package com.shuvo.ttit.bridgeculvert.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +32,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PHOTOHOLDER>
     private final ArrayList<PhotoList> mCategoryItem;
     private final Context myContext;
 
-    public static String urlFromPhotoAdapter = "";
 
     public PhotoAdapter(ArrayList<PhotoList> mCategoryItem, Context myContext) {
         this.mCategoryItem = mCategoryItem;
@@ -53,38 +53,32 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PHOTOHOLDER>
             stage = itemView.findViewById(R.id.working_stage_text);
             refresh = itemView.findViewById(R.id.refresh_picture);
 
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    AppCompatActivity activity = (AppCompatActivity) view.getContext();
-                    urlFromPhotoAdapter = mCategoryItem.get(getAdapterPosition()).getPhotoName();
-                    PicDialogue picDialogue = new PicDialogue();
-                    picDialogue.show(activity.getSupportFragmentManager(),"PICTURE");
-                }
+            imageView.setOnClickListener(view -> {
+                AppCompatActivity activity = (AppCompatActivity) view.getContext();
+                String url = mCategoryItem.get(getAdapterPosition()).getPhotoName();
+                Bitmap bitmap = mCategoryItem.get(getAdapterPosition()).getBitmap();
+                PicDialogue picDialogue = new PicDialogue(bitmap, url);
+                picDialogue.show(activity.getSupportFragmentManager(),"PICTURE");
             });
-            refresh.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Glide.with(myContext)
-                            .load(mCategoryItem.get(getAdapterPosition()).getPhotoName())
-                            .error(R.drawable.loading_error)
-                            .placeholder(R.drawable.loading)
-                            .listener(new RequestListener<Drawable>() {
-                                @Override
-                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                                    refresh.setVisibility(View.VISIBLE);
-                                    return false;
-                                }
 
-                                @Override
-                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                                    refresh.setVisibility(View.GONE);
-                                    return false;
-                                }
-                            })
-                            .into(imageView);
-                }
-            });
+            refresh.setOnClickListener(view -> Glide.with(myContext)
+                    .load(mCategoryItem.get(getAdapterPosition()).getPhotoName())
+                    .error(R.drawable.loading_error)
+                    .placeholder(R.drawable.loading)
+                    .listener(new RequestListener<>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            refresh.setVisibility(View.VISIBLE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                            refresh.setVisibility(View.GONE);
+                            return false;
+                        }
+                    })
+                    .into(imageView));
 
         }
     }
@@ -107,11 +101,34 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PHOTOHOLDER>
                 .load(categoryItem.getPhotoName())
                 .error(R.drawable.loading_error)
                 .placeholder(R.drawable.loading)
-                .listener(new RequestListener<Drawable>() {
+                .listener(new RequestListener<>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        holder.refresh.setVisibility(View.VISIBLE);
-                        return false;
+                        if (categoryItem.getBitmap() != null) {
+                            Glide.with(myContext)
+                                    .load(categoryItem.getBitmap())
+                                    .error(R.drawable.loading_error)
+                                    .placeholder(R.drawable.loading)
+                                    .listener(new RequestListener<>() {
+                                        @Override
+                                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                            holder.refresh.setVisibility(View.VISIBLE);
+                                            return false;
+                                        }
+
+                                        @Override
+                                        public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                            holder.refresh.setVisibility(View.GONE);
+                                            return false;
+                                        }
+                                    })
+                                    .into(holder.imageView);
+                        } else {
+                            // If bitmap is also null, let Glide show the error drawable
+                            holder.imageView.setImageResource(R.drawable.loading_error);
+                            holder.refresh.setVisibility(View.VISIBLE);
+                        }
+                        return true;
                     }
 
                     @Override

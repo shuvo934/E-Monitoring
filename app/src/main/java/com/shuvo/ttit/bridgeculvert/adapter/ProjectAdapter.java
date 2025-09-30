@@ -21,11 +21,7 @@ import com.shuvo.ttit.bridgeculvert.arraylist.Projectlists;
 import com.shuvo.ttit.bridgeculvert.projectDetails.ProjectDetails;
 
 import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
 public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.PRAHolder> {
 
@@ -104,24 +100,20 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.PRAHolde
             itemView.setOnClickListener(this);
 
 
-            projectName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    AppCompatActivity activity = (AppCompatActivity) view.getContext();
+            projectName.setOnClickListener(view -> {
+                AppCompatActivity activity = (AppCompatActivity) view.getContext();
 
+                locationListsAdapter = new ArrayList<>();
 
-
-                    locationListsAdapter = new ArrayList<>();
-
-                    INTERNAL_NO = mCategoryItem.get(getAdapterPosition()).getPcmInternalNo();
-                    P_NO = mCategoryItem.get(getAdapterPosition()).getPcmProjectNo();
-                    P_CODE = mCategoryItem.get(getAdapterPosition()).getPcmProjectCode();
-                    P_NAME = mCategoryItem.get(getAdapterPosition()).getPcmProjectName();
-                    P_DETAILS = mCategoryItem.get(getAdapterPosition()).getProjectDetails();
-                    ENTRY_DATE = mCategoryItem.get(getAdapterPosition()).getPcmEntryDate();
-                    START_DATE = mCategoryItem.get(getAdapterPosition()).getProjectStartDate();
-                    END_DATE = mCategoryItem.get(getAdapterPosition()).getProjectEndDate();
-                    SUBMITTER = mCategoryItem.get(getAdapterPosition()).getPcmUser();
+                INTERNAL_NO = mCategoryItem.get(getAdapterPosition()).getPcmInternalNo();
+                P_NO = mCategoryItem.get(getAdapterPosition()).getPcmProjectNo();
+                P_CODE = mCategoryItem.get(getAdapterPosition()).getPcmProjectCode();
+                P_NAME = mCategoryItem.get(getAdapterPosition()).getPcmProjectName();
+                P_DETAILS = mCategoryItem.get(getAdapterPosition()).getProjectDetails();
+                ENTRY_DATE = mCategoryItem.get(getAdapterPosition()).getPcmEntryDate();
+                START_DATE = mCategoryItem.get(getAdapterPosition()).getProjectStartDate();
+                END_DATE = mCategoryItem.get(getAdapterPosition()).getProjectEndDate();
+                SUBMITTER = mCategoryItem.get(getAdapterPosition()).getPcmUser();
 //                    String dateC = mCategoryItem.get(getAdapterPosition()).getPcmProjectDate().substring(0, 10);
 //                    System.out.println(dateC);
 //
@@ -139,65 +131,64 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.PRAHolde
 //                    if (date != null) {
 //                        formattedDate = sdf.format(date);
 //                    }
-                    P_DATE = mCategoryItem.get(getAdapterPosition()).getPcmProjectDate();
-                    F_YEAR = mCategoryItem.get(getAdapterPosition()).getFyFinancialYearName();
-                    String stype = mCategoryItem.get(getAdapterPosition()).getSanctionType();
-                    String totalVal = "";
-                    if (stype.contains("Taka")) {
-                        DecimalFormat formatter = new DecimalFormat("##,##,##,###");
-                        double val = 0.0;
-                        if (mCategoryItem.get(getAdapterPosition()).getPcmEstimateProjectValue() != null) {
-                            val = Double.parseDouble(mCategoryItem.get(getAdapterPosition()).getPcmEstimateProjectValue());
-                        }
-                        String formatted = formatter.format(val);
-                        totalVal = stype + " " + formatted;
+                P_DATE = mCategoryItem.get(getAdapterPosition()).getPcmProjectDate();
+                F_YEAR = mCategoryItem.get(getAdapterPosition()).getFyFinancialYearName();
+                String stype = mCategoryItem.get(getAdapterPosition()).getSanctionType();
+                String totalVal;
+                if (stype.contains("Taka")) {
+                    DecimalFormat formatter = new DecimalFormat("##,##,##,###");
+                    double val = 0.0;
+                    if (mCategoryItem.get(getAdapterPosition()).getPcmEstimateProjectValue() != null) {
+                        val = Double.parseDouble(mCategoryItem.get(getAdapterPosition()).getPcmEstimateProjectValue());
                     }
-                    else {
-                        totalVal = stype + " " + mCategoryItem.get(getAdapterPosition()).getPcmEstimateProjectValue();
-
-                    }
-                    ES_VAL = totalVal;
-//                    ES_VAL = mCategoryItem.get(getAdapterPosition()).getSanctionType() + " " + mCategoryItem.get(getAdapterPosition()).getPcmEstimateProjectValue();
-                    CATEGORY = mCategoryItem.get(getAdapterPosition()).getPcmCategoryName();
-                    P_TYPE = mCategoryItem.get(getAdapterPosition()).getProjectTypeName() +" > " + mCategoryItem.get(getAdapterPosition()).getProjectSubTypeName();
-                    F_NAME = mCategoryItem.get(getAdapterPosition()).getFsmFundName();
-                    SANC_CAT = mCategoryItem.get(getAdapterPosition()).getPscSanctionCatName();
-                    PIC_DET = mCategoryItem.get(getAdapterPosition()).getPcmPicChairmanName() + mCategoryItem.get(getAdapterPosition()).getPcmPicChairmanDetails();
-                    EVAL = mCategoryItem.get(getAdapterPosition()).getProjEvaluationRem();
-                    PCM_ID = mCategoryItem.get(getAdapterPosition()).getPcmId();
-                    LENGTH = mCategoryItem.get(getAdapterPosition()).getLength();
-                    WIDTH = mCategoryItem.get(getAdapterPosition()).getWidth();
-                    locationListsAdapter = mCategoryItem.get(getAdapterPosition()).getLocationLists();
-
-                    Intent intent = new Intent(myContext, ProjectDetails.class);
-                    intent.putExtra("INTERNAL_NO", INTERNAL_NO);
-                    intent.putExtra("P_NO",P_NO);
-                    intent.putExtra("P_CODE",P_CODE);
-                    intent.putExtra("P_NAME",P_NAME);
-                    intent.putExtra("P_DETAILS",P_DETAILS);
-                    intent.putExtra("ENTRY_DATE",ENTRY_DATE);
-                    intent.putExtra("START_DATE",START_DATE);
-                    intent.putExtra("END_DATE",END_DATE);
-                    intent.putExtra("SUBMITTER",SUBMITTER);
-                    intent.putExtra("P_DATE",P_DATE);
-                    intent.putExtra("F_YEAR",F_YEAR);
-                    intent.putExtra("ES_VAL",ES_VAL);
-                    intent.putExtra("CATEGORY",CATEGORY);
-                    intent.putExtra("P_TYPE",P_TYPE);
-                    intent.putExtra("F_NAME",F_NAME);
-                    intent.putExtra("SANC_CAT",SANC_CAT);
-                    intent.putExtra("PIC_DET",PIC_DET);
-                    intent.putExtra("EVAL",EVAL);
-                    intent.putExtra("PCM_ID",PCM_ID);
-                    intent.putExtra("LENGTH",LENGTH);
-                    intent.putExtra("WIDTH",WIDTH);
-                    intent.putExtra("FROM_MAP",false);
-                    activity.startActivity(intent);
-
-                    selectedPosition = getAdapterPosition();
-                    notifyDataSetChanged();
-//                    detailsDialogue.show(activity.getSupportFragmentManager(),"DD");
+                    String formatted = formatter.format(val);
+                    totalVal = stype + " " + formatted;
                 }
+                else {
+                    totalVal = stype + " " + mCategoryItem.get(getAdapterPosition()).getPcmEstimateProjectValue();
+
+                }
+                ES_VAL = totalVal;
+//                    ES_VAL = mCategoryItem.get(getAdapterPosition()).getSanctionType() + " " + mCategoryItem.get(getAdapterPosition()).getPcmEstimateProjectValue();
+                CATEGORY = mCategoryItem.get(getAdapterPosition()).getPcmCategoryName();
+                P_TYPE = mCategoryItem.get(getAdapterPosition()).getProjectTypeName() +" > " + mCategoryItem.get(getAdapterPosition()).getProjectSubTypeName();
+                F_NAME = mCategoryItem.get(getAdapterPosition()).getFsmFundName();
+                SANC_CAT = mCategoryItem.get(getAdapterPosition()).getPscSanctionCatName();
+                PIC_DET = mCategoryItem.get(getAdapterPosition()).getPcmPicChairmanName() + mCategoryItem.get(getAdapterPosition()).getPcmPicChairmanDetails();
+                EVAL = mCategoryItem.get(getAdapterPosition()).getProjEvaluationRem();
+                PCM_ID = mCategoryItem.get(getAdapterPosition()).getPcmId();
+                LENGTH = mCategoryItem.get(getAdapterPosition()).getLength();
+                WIDTH = mCategoryItem.get(getAdapterPosition()).getWidth();
+                locationListsAdapter = mCategoryItem.get(getAdapterPosition()).getLocationLists();
+
+                Intent intent = new Intent(myContext, ProjectDetails.class);
+                intent.putExtra("INTERNAL_NO", INTERNAL_NO);
+                intent.putExtra("P_NO",P_NO);
+                intent.putExtra("P_CODE",P_CODE);
+                intent.putExtra("P_NAME",P_NAME);
+                intent.putExtra("P_DETAILS",P_DETAILS);
+                intent.putExtra("ENTRY_DATE",ENTRY_DATE);
+                intent.putExtra("START_DATE",START_DATE);
+                intent.putExtra("END_DATE",END_DATE);
+                intent.putExtra("SUBMITTER",SUBMITTER);
+                intent.putExtra("P_DATE",P_DATE);
+                intent.putExtra("F_YEAR",F_YEAR);
+                intent.putExtra("ES_VAL",ES_VAL);
+                intent.putExtra("CATEGORY",CATEGORY);
+                intent.putExtra("P_TYPE",P_TYPE);
+                intent.putExtra("F_NAME",F_NAME);
+                intent.putExtra("SANC_CAT",SANC_CAT);
+                intent.putExtra("PIC_DET",PIC_DET);
+                intent.putExtra("EVAL",EVAL);
+                intent.putExtra("PCM_ID",PCM_ID);
+                intent.putExtra("LENGTH",LENGTH);
+                intent.putExtra("WIDTH",WIDTH);
+                intent.putExtra("FROM_MAP",false);
+                activity.startActivity(intent);
+
+                selectedPosition = getAdapterPosition();
+                notifyDataSetChanged();
+//                    detailsDialogue.show(activity.getSupportFragmentManager(),"DD");
             });
 
         }
